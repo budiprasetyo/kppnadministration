@@ -1,0 +1,90 @@
+
+/* styling of an exposed element */ 
+#mask {
+	background:#678 url(images/mask_gradient_1000.png) no-repeat;
+	background-position:13% 160px;
+}
+
+
+form.expose {
+	border:3px outset #ccc;
+	background:#c0c0c0 url(images/h150.png) repeat-x;
+	padding:20px;
+	margin:9.5em 14em;
+	text-align:center;
+	width:350px;
+	-moz-border-radius:4px;
+}
+
+#wrapper {
+	background-image: url(images/background.jpg);
+	background-repeat: repeat-y;
+	width: 800px;
+	height: 549px;	
+	border: 4px ridge #008000;
+	margin-right: auto;
+	margin-left: auto;
+}
+
+#header {
+	position: relative;
+	background-image: url(images/banner.jpg);
+	background-repeat: no-repeat;
+	margin-right: auto;
+	margin-left: auto;
+	width: 800px;
+	padding-top: 70px;
+	text-align: left;
+}
+
+#footer {
+	font-size: 11px;
+	font-style: bold;
+	color: #FFFF88;
+	background-image: url(images/footer.jpg);
+	background-repeat: no-repeat;
+	margin-right: auto;
+	margin-left: auto;
+	text-align: center;
+	height: 26px;
+	width: 800px;
+	line-height: 250%;
+}
+
+label, input {
+	display: block;
+	width: 150px;
+	float: left;
+	margin-bottom: 10px;
+}
+
+
+
+label {
+	text-align: right;
+	width: 75px;
+	padding-right: 20px;
+}
+
+br {
+	clear: left;
+}
+
+/* end styling expose */
+
+body {
+	padding:10px;
+	font-family:"Lucida Grande","Lucida Sans Unicode","bitstream vera sans","trebuchet ms",verdana;
+}
+
+/* get rid of those system borders being generated for A tags */
+a:active {
+  outline:none;
+}
+
+:focus {
+  -moz-outline-style:none;
+}
+/* end of jquery login */
+
+

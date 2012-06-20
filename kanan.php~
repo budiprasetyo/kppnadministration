@@ -1,0 +1,15 @@
+<?php
+// Form Pencarian
+$qcari=mysql_num_rows(mysql_query("select * from modul where nama_modul='Pencarian' and publish='Y'"));
+// Apabila modul Pencarian diaktifkan Publish=Y, maka tampilkan modul Pencarian
+if ($qcari > 0){
+  echo "<img src=$f[folder]/images/><br />
+        <form method=POST action='hasil-pencarian.html'>    
+        <input name=kata type=text size=17 maxlength=50 />
+        <input type=submit value=Go />
+        </form>";
+}
+
+
+
+?>
