@@ -200,7 +200,7 @@ elseif($_POST['loadKeTabelArsip']=='Load'){
 	}
 
 	include_once($koneksi);
-	$qLoad		= mysql_query("SELECT DISTINCT nosp2d,tgsp2d,kdjendok,kddept,kdunit,kdsatker,nokarwas,kddekon,nospm,tgspm FROM m_spmind WHERE tgsp2d BETWEEN '$tanggal1' AND '$tanggal2'");
+	$qLoad		= mysql_query("SELECT DISTINCT nosp2d,tgsp2d,kdjendok,kddept,kdunit,kdsatker,nokarwas,kddekon,nospm,tgspm,noadvis FROM m_spmind WHERE tgsp2d BETWEEN '$tanggal1' AND '$tanggal2'");
 	while($rLoad		= mysql_fetch_object($qLoad)){
 			$nosp2d		= $rLoad->nosp2d;
 			$tgsp2d		= $rLoad->tgsp2d;
@@ -212,17 +212,26 @@ elseif($_POST['loadKeTabelArsip']=='Load'){
 			$kddekon	= $rLoad->kddekon;
 			$nospm		= $rLoad->nospm;
 			$tgspm		= $rLoad->tgspm;
-			$datasp2d[]	= '("' . $nosp2d . '", "' . $tgsp2d . '", "' . $kdjendok . '", "' . $kddept . '", "' . $kdunit . '", "' . $kdsatker . '", "' . $nokarwas . '", "' . $kddekon . '", "' . $nospm . '", "' . $tgspm . '")';
+			$noadvis	= $rLoad->noadvis;
+			$datasp2d[]	= '("' . $nosp2d . '", "' . $tgsp2d . '", "' . $kdjendok . '", "' . $kddept . '", "' . $kdunit . '", "' . $kdsatker . '", "' . $nokarwas . '", "' . $kddekon . '", "' . $nospm . '", "' . $tgspm . '","' . $noadvis . '")';
 	}
 	
-		$qInsert 	= "INSERT INTO monitor.d_arsipsp2d(nosp2d,tgsp2d,kdjendok,kddept,kdunit,kdsatker,nokarwas,kddekon,nospm,tgspm) VALUES". implode(',',$datasp2d);
-		$filename	= str_replace("-","",$tgsp2d);
-		$handle		= @fopen(dirname(__FILE__)."/temp/".$filename,"w");
+		$qInsert 	= "INSERT INTO monitor.d_arsipsp2d(nosp2d,tgsp2d,kdjendok,kddept,kdunit,kdsatker,nokarwas,kddekon,nospm,tgspm,noadvis) VALUES". implode(',',$datasp2d);
+		$filename	= "insertintotable";
+		$folder		= dirname(__FILE__)."/temp/".$filename;
+		$handle		= @fopen($folder,"w");
 		fwrite($handle,$qInsert);
 		fclose($handle);
 		include_once("config/koneksi.php");
+		/* For windows user, start here
+		 * For production you must change load_sp2d.bat because file's default is on d:\
+		 * $output = system("cmd /c ".dirname(__FILE__).'/load_sp2d.bat');
+		 * end here */
+		 
+		/* For unix family, start here */
 		mysql_query($qInsert);
 		$output = shell_exec('mysql -uroot -P3306 -hlocalhost -pM3t@m0rph monitor < /var/www/temp/'.$filename);
+		/* end here */
 		echo "
 			<script type='text/javascript'>
 				alert('Load data selesai');
