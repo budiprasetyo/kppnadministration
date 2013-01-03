@@ -769,6 +769,9 @@ elseif($_GET['module'] == "monitoringsuratmasuk"){
 		case "abp":
 			$section = "bp";
 			break;
+		case "all":
+			$section = "um";
+			break;
 	}
 	echo "<div id='stylizedtable' class='mytable'>
 			<h1>Form monitoring surat masuk</h1> 
@@ -948,7 +951,7 @@ elseif($_POST['cariDokSuratMasuk'] == "Cari"){
 	}
 	if(isset($tglawalsuratCek)){
 		if(empty($bagianWhere)){
-			$bagianWhere .= "tglsurat>='$tglawalsurat'";
+			$bagianWhere .= "tglsurat>='$tglawalsurat' ";
 		}
 		else{
 			$bagianWhere .= " AND tglsurat>='$tglawalsurat'";
@@ -986,55 +989,110 @@ elseif($_POST['cariDokSuratMasuk'] == "Cari"){
 	if($rCek > 0){
 		
 		echo "<div id='stylized' class='myform'>
-				<form id='form' name='formSearchSuratMasuk' method='post' action='"; echo(htmlentities($_SERVER['PHP_SELF'])); echo "'>
+				<form id='form' name='formSearchSuratMasuk' method='post' action='".htmlentities($_SERVER['PHP_SELF'])."'>
 				<h1>Form hasil pencarian data surat masuk</h1> 
 					<p>Hasil pencarian data surat masuk</p>
 					</form>
 					</div>
 					<br />	
-					<table class='normaltable' border='0'>
-					<tr>
-					<th width='6%'>No.</th>
-					<th width='10%'>No. Surat</th>
-					<th width='10%'>Tgl. Surat</th>
-					<th width='24%'>Asal Surat</th>
-					<th width='24%'>Perihal</th>
-					<th width='15%'>Surat Tanggapan</th>
-					<th width='10%'>File Surat Masuk</th>
-					<th width='10%' colspan='2'>Action</th>
-					</tr>";
-			
-			$query		= "SELECT idsurat,nomorsuratmasuk,date_format(tglsurat,'%d-%m-%Y') AS tglsurat,asalsurat,perihal,CONCAT(nomorsuratkeluar,kodesuratkeluar) AS nomorsuratkeluar,file,um,pd,bp,vr,sk FROM d_suratmasuk WHERE ".$bagianWhere;
-			$qCari		= mysql_query($query)or die(mysql_error());
-			$no	= 1;
-			$oddcol		= "#CCFF99";
-			$evencol		= "#CCDD88";
-			while($rCari		= mysql_fetch_array($qCari)){
-				if($no % 2 == 0) {$color = $evencol;}
-				else{$color = $oddcol;}
-						$idsurat			= $rCari['idsurat'];
-						$nomorsuratmasuk	= $rCari['nomorsuratmasuk'];
-						$tglsurat			= $rCari['tglsurat'];
-						$asalsurat			= $rCari['asalsurat'];
-						$perihal			= $rCari['perihal'];
-						$nomorsuratkeluar	= $rCari['nomorsuratkeluar'];
-						$file				= $rCari['file'];
-					
-						echo"<tr bgcolor='$color'>
-								<td>$no</td>
-								<td>$nomorsuratmasuk</td>
-								<td>$tglsurat</td>
-								<td>$asalsurat</td>
-								<td>$perihal</td>
-								<td>$nomorsuratkeluar</td>
-								<td><b><i><a href='suratmasuk/$file' target='_blank'>$file</a></b></i></td>
-								<td><form method='post' action='".$_SERVER['PHP_SELF']."'><input type='hidden' name='idsurat' value='".$idsurat."' /><input type='submit' name='ubahsuratmasuk' value='Ubah' /></form></td>
-								<td><form method='post' action='".$_SERVER['PHP_SELF']."'><input type='hidden' name='idsurat' value='".$idsurat."' /><input type='submit' name='hapussuratmasuk' value='Hapus' /></form></td>
+					<table border='0' class='normaltable'>
+							<tr>
+								<th width='7%'>No.</th>
+								<th width='25%'>No. Surat</th>
+								<th width='20%'>Tgl. Surat</th>
+								<th width='25%'>Asal Surat</th>
+								<th width=''>Perihal</th>
+								<th width='20%'>Surat Tanggapan</th>
+								<th width='20%'>File Surat Masuk</th>
+								<th width='7%'>Gudang</th>
+								<th width='7%'>No.Rak</th>
+								<th width='7%'>No.Baris</th>
+								<th width='7%'>No.Box</th>
+								<th width='40%' colspan='2'>Action</th>
 							</tr>";
-						$no++;
-						}
-						echo"</table>";
-					
+								
+								$query		= "SELECT a.idsurat,a.nomorsuratmasuk,date_format(a.tglsurat,'%d-%m-%Y') AS tglsurat,a.asalsurat,a.perihal,CONCAT(a.nomorsuratkeluar,a.kodesuratkeluar) AS nomorsuratkeluar,a.file,a.um,a.pd,a.bp,a.vr,a.sk,b.nm_gudang,b.kd_rak,b.no_rak,b.kd_baris,b.no_baris,b.kd_box,b.no_box FROM d_suratmasuk a LEFT JOIN d_arsipsuratmasuk b ON a.idsurat=b.idsurat WHERE ".$bagianWhere;
+								$qCari		= mysql_query($query)or die(mysql_error());
+								$no	= 1;
+								$oddcol		= "#CCFF99";
+								$evencol	= "#CCDD88";
+								while($rCari		= mysql_fetch_array($qCari)){
+									if($no % 2 == 0) {$color = $evencol;}
+									else{$color = $oddcol;}
+											$idsurat			= $rCari['idsurat'];
+											$nomorsuratmasuk	= $rCari['nomorsuratmasuk'];
+											$tglsurat			= $rCari['tglsurat'];
+											$asalsurat			= $rCari['asalsurat'];
+											$perihal			= $rCari['perihal'];
+											$nomorsuratkeluar	= $rCari['nomorsuratkeluar'];
+											$file				= $rCari['file'];
+											$gudang				= $rCari['nm_gudang'];
+											if($rCari['no_rak'] == '')
+											{
+												$rak	= "";
+											}
+											else
+											{
+												$rak				= $rCari['kd_rak']."-".$rCari['no_rak'];
+											}
+											if($rCari['no_baris'] == '')
+											{
+												$baris	= "";
+											}
+											else
+											{
+												$baris				= $rCari['kd_baris']."-".$rCari['no_baris'];
+											}
+											if($rCari['no_box'] == '')
+											{
+												$box	= "";
+											}
+											else
+											{
+												$box				= $rCari['kd_box']."-".$rCari['no_box'];
+											}
+										
+								echo"<tr bgcolor='$color'>
+											<td>$no</td>
+											<td>$nomorsuratmasuk</td>
+											<td>$tglsurat</td>
+											<td>$asalsurat</td>
+											<td>$perihal</td>
+											<td>$nomorsuratkeluar</td>
+											<td><b><i><a href='suratmasuk/$file' target='_blank'>$file</a></b></i></td>
+											<td>$gudang</td>
+											<td>$rak</td>
+											<td>$baris</td>
+											<td>$box</td>
+											<td><form method='post' action='".$_SERVER['PHP_SELF']."'><input type='hidden' name='idsurat' value='".$idsurat."' /><input type='submit' name='ubahsuratmasuk' value='Ubah' class='normaltablesubmit' /></form></td>
+											<td><form method='post' action='".$_SERVER['PHP_SELF']."'><input type='hidden' name='idsurat' value='".$idsurat."' /><input type='submit' name='hapussuratmasuk' value='Hapus' class='normaltablesubmit' /></form></td>";
+									$no++;
+									}
+									echo
+									"
+									</tr>	
+									</table>
+									<form method='post' action='".$_SERVER['PHP_SELF']."'>";
+											$n = 1;
+											$qnArsip = mysql_query($query);
+											while($rnArsip = mysql_fetch_object($qnArsip)){
+												echo "
+												<input type='hidden' name='idsurat".$n."' value='".$rnArsip->idsurat."' />
+												<input type='hidden' name='nomorsuratmasuk".$n."' value='".$rnArsip->nomorsuratmasuk."' />
+												<input type='hidden' name='tglsurat".$n."' value='".$rnArsip->tglsurat."' />
+												<input type='hidden' name='asalsurat".$n."' value='".$rnArsip->asalsurat."' />
+												<input type='hidden' name='perihal".$n."' value='".$rnArsip->perihal."' />
+												<input type='hidden' name='file".$n."' value='".$rnArsip->file."' />
+												";
+												$n++;
+											}
+											$n = $n - 1;
+											echo "
+											<br />
+											<input type='hidden' name='jumldata' value='".$n."' />
+											<input type='submit' name='arsipsuratmasuk' value='Arsipkan' class='normaltablesubmit' />
+									</form>
+						<br />";
 	}
 	else{
 				echo "<script type='text/javascript'>
@@ -1157,6 +1215,170 @@ elseif($_POST['hapussuratmasuk'] == 'Hapus')
 	header("location: media.php?module=searchsuratmasuk");
 }
 
+// Modul Arsipkan Surat Masuk ---------------------------------------------------------------
+elseif($_POST['arsipsuratmasuk'] == 'Arsipkan')
+{
+	
+	echo "
+	<div id='stylized' class='myform'>
+		<form id='form' name='formArsipSuratMasuk' method='post' action='"; echo(htmlentities($_SERVER['PHP_SELF'])); echo "'>
+			<h1>Form pengarsipan surat masuk</h1> 
+			<p>Pemilihan surat masuk yang hendak diarsipkan</p>
+			
+			
+			<form method='post' action='".htmlentities($_SERVER['PHP_SELF'])."'>
+			<label>Gudang</label>
+			<select name='nm_gudang'  onkeypress='return handleEnter(this,event)'>
+						<option value='' selected='selected'>-- Pilih Gudang--</option>";
+			
+						$qRgudang	= mysql_query("SELECT nm_gudang,ket_gudang FROM r_gudang ORDER BY id_gudang");
+						while($rRgudang	= mysql_fetch_object($qRgudang))
+						{
+							echo "<option value = '".$rRgudang->nm_gudang."'>".$rRgudang->nm_gudang." - ".$rRgudang->ket_gudang."</option>";
+						}
+						
+			echo "
+			</select>
+			
+						
+			<label>Kode Rak</label>
+			<select name='kd_rak' onkeypress='return handleEnter(this,event)'>
+						<option value='' selected='selected'>-- Pilih Kode Rak--</option>";
+			
+						$qRrak	= mysql_query("SELECT kd_rak,ket_rak FROM r_rak ORDER BY id_rak");
+						while($rRrak	= mysql_fetch_object($qRrak))
+						{
+							echo "<option value = '".$rRrak->kd_rak."'>".$rRrak->kd_rak." - ".$rRrak->ket_rak."</option>";
+						}
+						
+			echo "
+			</select>
+			
+			<label>Nomor Rak</label>
+			<input type='text' id='no_rak' name='no_rak' maxlength='4' onkeypress='return handleEnter(this,event)' onkeyup=\"moveOnMax(this,'kd_baris')\" />
+				
+									
+			<label>Kode Baris</label>
+			<select name='kd_baris' onkeypress='return handleEnter(this,event)'>
+						<option value='' selected='selected'>-- Pilih Kode Baris--</option>";
+			
+						$qRbaris	= mysql_query("SELECT kd_baris,ket_baris FROM r_baris ORDER BY id_baris");
+						while($rRbaris	= mysql_fetch_object($qRbaris))
+						{
+							echo "<option value = '".$rRbaris->kd_baris."'>".$rRbaris->kd_baris." - ".$rRbaris->ket_baris."</option>";
+						}
+						
+			echo "
+			</select>
+			
+			<label>Nomor Baris</label>
+			<input type='text' id='no_baris' name='no_baris' maxlength='4' onkeypress='return handleEnter(this,event)' onkeyup=\"moveOnMax(this,'kd_box')\" />
+			
+												
+			<label>Kode Box</label>
+			<select name='kd_box' onkeypress='return handleEnter(this,event)'>
+						<option value='' selected='selected'>-- Pilih Kode Box--</option>";
+			
+						$qRbox	= mysql_query("SELECT kd_box,ket_box FROM r_box ORDER BY id_box");
+						while($rRbox	= mysql_fetch_object($qRbox))
+						{
+							echo "<option value = '".$rRbox->kd_box."'>".$rRbox->kd_box." - ".$rRbox->ket_box."</option>";
+						}
+						
+			echo "
+			</select>
+			
+			<label>Nomor Box</label>
+			<input type='text' id='no_box' name='no_box' maxlength='5' onkeypress='return handleEnter(this,event)' onkeyup=\"moveOnMax(this,'arsip1')\" />
+			
+			<div class='spacer'></div>
+				
+		
+	<br />	
+	";
+	$jumldata 	= $_POST['jumldata'];
+	$oddcol		= "#CCFF99";
+	$evencol	= "#CCDD88";
+	echo "
+		<table border='1' class='normaltable' width='80%' colpadding='2px' style='border-collapse:collapse; border-color:#CEEC96;'>
+			<tbody>
+				<tr>
+					<th>No.Surat</th>
+					<th>Tgl.Surat</th>
+					<th>Asal Surat</th>
+					<th>Perihal</th>
+					<th>File</th>
+					<th>Arsip</th>
+				</tr>
+		";
+	$i = 1;
+	for($i = 1; $i <= $jumldata; $i++)
+	{
+	$id = $_POST['idsurat'.$i];
+	$qArsipSurat	= mysql_query("SELECT a.idsurat, a.nomorsuratmasuk, a.tglsurat, a.asalsurat, a.perihal, a.file FROM d_suratmasuk a LEFT JOIN d_arsipsuratmasuk b ON a.idsurat=b.idsurat WHERE a.idsurat='$id' AND b.idsurat is null ORDER BY a.tglsurat");
+	$rArsipSurat	= mysql_fetch_array($qArsipSurat);
+	//while($rArsipSurat = mysql_fetch_array($qArsipSurat))
+		if($i % 2 == 0) {$color = $evencol;}
+		else{$color = $oddcol;}
+		
+		$idsurat 			= $rArsipSurat['idsurat'];
+		$nomorsuratmasuk 	= $rArsipSurat['nomorsuratmasuk'];
+		$tglsurat		 	= $rArsipSurat['tglsurat'];
+		$asalsurat		 	= $rArsipSurat['asalsurat'];
+		$perihal		 	= $rArsipSurat['perihal'];
+		$file			 	= $rArsipSurat['file'];
+		
+		echo "
+				<tr bgcolor=".$color.">
+					<td>".$nomorsuratmasuk."</td>
+					<td>".$tglsurat."</td>
+					<td>".$asalsurat."</td>
+					<td>".$perihal."</td>
+					<td><b><i><a href='suratmasuk/".$file."' target='_blank'>".$file."</a></i></b></td>
+					<td>
+						<input type='hidden' name='idsurat".$i."' value=".$idsurat." />
+						<input type='checkbox' id='arsip".$i."' name='arsip".$i."' value=".$i." />
+					</td>
+				</tr>
+		";
+	}
+	echo "
+			</tbody>
+		</table>
+		<br />
+		<input type='hidden' name='jumldata' value=".$jumldata." />
+		<input type='submit' name='btn_arsipsuratmasuk' value='Arsipkan' class='normaltablesubmit' />
+		</form>
+		<div class='spacer'></div>
+	</form>
+	</div>
+	";
+	 
+}
+
+// Penyimpanan Surat Masuk Sebagai Data Arsip -------------------------------------------------------//
+elseif($_POST['btn_arsipsuratmasuk'] == 'Arsipkan')
+{
+	$jumldata 	= $_POST['jumldata'];
+	
+	$nm_gudang 	= $_POST['nm_gudang'];
+	$kd_rak		= $_POST['kd_rak'];
+	$no_rak		= sprintf("%04s",$_POST['no_rak']);
+	$kd_baris	= $_POST['kd_baris'];
+	$no_baris	= sprintf("%04s",$_POST['no_baris']);
+	$kd_box		= $_POST['kd_box'];
+	$no_box		= sprintf("%05s",$_POST['no_box']);
+	for($i = 1; $i <= $jumldata; $i++)
+	{
+		if(!empty($_POST['arsip'.$i]))
+		{
+			$idsurat[]	= '("'.$_POST["idsurat".$i].'", "'.$nm_gudang.'", "'.$kd_rak.'", "'.$no_rak.'", "'.$kd_baris.'", "'.$no_baris.'", "'.$kd_box.'", "'.$no_box.'")';
+		}
+	}
+	
+	$qInsSuratMasuk = "INSERT INTO d_arsipsuratmasuk(idsurat, nm_gudang, kd_rak, no_rak, kd_baris, no_baris, kd_box, no_box) VALUES " . implode(',',$idsurat);
+	mysql_query($qInsSuratMasuk);
+}
 // Modul Pengantar Surat Masuk ======================================================================//
 elseif($_GET['module'] == 'pengantarsuratmasuk'){
 	echo "<style type='text/css'>
@@ -1424,6 +1646,7 @@ elseif($_POST['prosessurattanggapan'] == 'Proses'){
 						<option value='' selected='selected'>-- Pilih --</option>
 						<option value='S'>S</option>
 						<option value='SP'>SP</option>
+						<option value='SPD'>SPD</option>
 						<option value='SKPA'>SKPA</option>
 						<option value='SPK'>SPK</option>
 						<option value='SP2LK'>SP2LK</option>
@@ -1478,23 +1701,23 @@ elseif($_POST['Ambilnomorsuratkeluar']=='Rekam'){
 	$rKodesuratkeluar 	= mysql_fetch_object($qKodesuratkeluar);
 	$wpb				= $rKodesuratkeluar->wpb;
 	$kp					= $rKodesuratkeluar->kp;
-	$yearnow			= date("Y");
+	$yearnow			= substr($_POST['tglsurat'],-4);
 	// penomoran surat berdasarkan seksi
 	switch($seksi){
 		case kk:
 		$kodesuratkeluar = "/WPB." . $wpb . "/KP." . $kp . "/" . $yearnow;
 		break;
 		case um:
-		$kodesuratkeluar = "/WPB." . $wpb . "/KP." . $kp . "10/" . $yearnow;
+		$kodesuratkeluar = "/WPB." . $wpb . "/KP." . $kp . "/" . $yearnow;
 		break;
 		case pd:
-		$kodesuratkeluar = "/WPB." . $wpb . "/KP." . $kp . "21/" . $yearnow;
+		$kodesuratkeluar = "/WPB." . $wpb . "/KP." . $kp . "/" . $yearnow;
 		break;
 		case bp:
-		$kodesuratkeluar = "/WPB." . $wpb . "/KP." . $kp . "30/" . $yearnow;
+		$kodesuratkeluar = "/WPB." . $wpb . "/KP." . $kp . "/" . $yearnow;
 		break;
 		case vr:
-		$kodesuratkeluar = "/WPB." . $wpb . "/KP." . $kp . "40/" . $yearnow;
+		$kodesuratkeluar = "/WPB." . $wpb . "/KP." . $kp . "/" . $yearnow;
 		break;
 	}
 	$nomorsuratkeluar	= $_POST['nomorsuratkeluar'];
@@ -1503,7 +1726,7 @@ elseif($_POST['Ambilnomorsuratkeluar']=='Rekam'){
 	$tujuansurat		= $_POST['tujuansurat'];
 	$perihal			= $_POST['perihal'];
 	// query max nomor surat keluar
-	$qMaxnoklr	= mysql_query("SELECT MAX(SUBSTRING_INDEX(SUBSTRING_INDEX(nomorsuratkeluar,'-',2),'-',-1)) maxNoklr FROM d_suratkeluar WHERE SUBSTRING_INDEX(SUBSTRING_INDEX(nomorsuratkeluar,'-',1),'-',-1) = '$nomorsuratkeluar'");
+	$qMaxnoklr	= mysql_query("SELECT MAX(SUBSTRING_INDEX(SUBSTRING_INDEX(nomorsuratkeluar,'-',2),'-',-1)) maxNoklr FROM d_suratkeluar WHERE SUBSTRING_INDEX(SUBSTRING_INDEX(nomorsuratkeluar,'-',1),'-',-1) = '$nomorsuratkeluar' AND YEAR(tglsurat) = '$yearnow'");
 	$rMaxnoklr	= mysql_fetch_array($qMaxnoklr);
 	
 	// penambahan setiap nomor surat keluar
@@ -1632,6 +1855,9 @@ elseif($_GET['module'] == 'suratkeluarmanual'){
 						{
 							case "um":
 								echo "<option value='um'>Sub Bagian Umum</option>";
+								echo "<option value='um'>Pencairan Dana</option>";
+								echo "<option value='um'>Bank & Giro Pos</option>";
+								echo "<option value='um'>Verifikasi & Akuntansi</option>";
 								break;
 							case "aum":
 								echo "<option value='um'>Sub Bagian Umum</option>";
@@ -1654,6 +1880,9 @@ elseif($_GET['module'] == 'suratkeluarmanual'){
 							case "avr":
 								echo "<option value='vr'>Verifikasi & Akuntansi</option>";
 								break;
+							case "all":
+								echo "<option value='vr'>Sub Bagian Umum</option>";
+								break;
 						}
 					echo "
 					</select>
@@ -1665,6 +1894,7 @@ elseif($_GET['module'] == 'suratkeluarmanual'){
 						<option value='' selected='selected'>-- Pilih --</option>
 						<option value='S'>S</option>
 						<option value='SP'>SP</option>
+						<option value='SPD'>SPD</option>
 						<option value='SKPA'>SKPA</option>
 						<option value='SPK'>SPK</option>
 						<option value='SP2LK'>SP2LK</option>
@@ -1768,6 +1998,7 @@ elseif($_GET['module'] == 'suratkeluar'){
 						<option value='' selected='selected'>-- Pilih --</option>
 						<option value='S'>S</option>
 						<option value='SP'>SP</option>
+						<option value='SPD'>SPD</option>
 						<option value='SKPA'>SKPA</option>
 						<option value='SPK'>SPK</option>
 						<option value='SP2LK'>SP2LK</option>
@@ -1821,23 +2052,23 @@ elseif($_POST['Ambilnomorsuratkeluarumum']=='Rekam'){
 	$rKodesuratkeluar 	= mysql_fetch_object($qKodesuratkeluar);
 	$wpb				= $rKodesuratkeluar->wpb;
 	$kp					= $rKodesuratkeluar->kp;
-	$yearnow			= date("Y");
+	$yearnow			= substr($_POST['tglsurat'],-4);
 	
 	switch($seksi){
 		case kk:
 		$kodesuratkeluar = "/WPB." . $wpb . "/KP." . $kp . "/" . $yearnow;
 		break;
 		case um:
-		$kodesuratkeluar = "/WPB." . $wpb . "/KP." . $kp . "10/" . $yearnow;
+		$kodesuratkeluar = "/WPB." . $wpb . "/KP." . $kp . "/" . $yearnow;
 		break;
 		case pd:
-		$kodesuratkeluar = "/WPB." . $wpb . "/KP." . $kp . "21/" . $yearnow;
+		$kodesuratkeluar = "/WPB." . $wpb . "/KP." . $kp . "/" . $yearnow;
 		break;
 		case bp:
-		$kodesuratkeluar = "/WPB." . $wpb . "/KP." . $kp . "30/" . $yearnow;
+		$kodesuratkeluar = "/WPB." . $wpb . "/KP." . $kp . "/" . $yearnow;
 		break;
 		case vr:
-		$kodesuratkeluar = "/WPB." . $wpb . "/KP." . $kp . "40/" . $yearnow;
+		$kodesuratkeluar = "/WPB." . $wpb . "/KP." . $kp . "/" . $yearnow;
 		break;
 	}
 	$nomorsuratkeluar	= $_POST['nomorsuratkeluar'];
@@ -1846,7 +2077,7 @@ elseif($_POST['Ambilnomorsuratkeluarumum']=='Rekam'){
 	$tujuansurat		= $_POST['tujuansurat'];
 	$perihal			= $_POST['perihal'];
 	// query max nomor surat keluar
-	$qMaxnoklr	= mysql_query("SELECT MAX(SUBSTRING_INDEX(SUBSTRING_INDEX(nomorsuratkeluar,'-',2),'-',-1)) maxNoklr FROM d_suratkeluar WHERE SUBSTRING_INDEX(SUBSTRING_INDEX(nomorsuratkeluar,'-',1),'-',-1) = '$nomorsuratkeluar'");
+	$qMaxnoklr	= mysql_query("SELECT MAX(SUBSTRING_INDEX(SUBSTRING_INDEX(nomorsuratkeluar,'-',2),'-',-1)) maxNoklr FROM d_suratkeluar WHERE SUBSTRING_INDEX(SUBSTRING_INDEX(nomorsuratkeluar,'-',1),'-',-1) = '$nomorsuratkeluar' AND YEAR(tglsurat) = '$yearnow'");
 	$rMaxnoklr	= mysql_fetch_array($qMaxnoklr);
 	
 	// penambahan setiap nomor surat keluar
@@ -2077,15 +2308,18 @@ elseif($_POST['cariDokSuratKeluar'] == "Cari"){
 					<table class='normaltable' border='0'>
 					<tr>
 					<th width='6%'>No.</th>
-					<th width='10%'>No. Surat</th>
-					<th width='10%'>Tgl. Surat</th>
-					<th width='24%'>Tujuan Surat</th>
-					<th width='24%'>Perihal</th>
-					<th width='15%'>Surat Masuk</th>
+					<th width='10%'>
+						No. Surat<br />
+						Tgl. Surat
+					</th>
+					<th width='25%'>Tujuan Surat</th>
+					<th width='25%'>Perihal</th>
+					<th width='10%'>Surat Masuk</th>
 					<th width='10%'>File Surat Keluar</th>
+					<th colspan='2'>Tindakan</th>
 					</tr>";
 			
-			$query		= "SELECT nomorsuratmasuk,date_format(tglsurat,'%d-%m-%Y') AS tglsurat,tujuansurat,perihal,CONCAT(nomorsuratkeluar,kodesuratkeluar) AS nomorsuratkeluar,file FROM d_suratkeluar WHERE ".$bagianWhere;
+			$query		= "SELECT idsurat,nomorsuratmasuk,date_format(tglsurat,'%d-%m-%Y') AS tglsurat,tujuansurat,perihal,CONCAT(nomorsuratkeluar,kodesuratkeluar) AS nomorsuratkeluar,file FROM d_suratkeluar WHERE ".$bagianWhere;
 			$qCari		= mysql_query($query)or die(mysql_error());
 			$no	= 1;
 			$oddcol		= "#CCFF99";
@@ -2093,6 +2327,7 @@ elseif($_POST['cariDokSuratKeluar'] == "Cari"){
 			while($rCari		= mysql_fetch_array($qCari)){
 				if($no % 2 == 0) {$color = $evencol;}
 				else{$color = $oddcol;}
+						$idsurat			= $rCari['idsurat'];
 						$nomorsuratmasuk	= $rCari['nomorsuratmasuk'];
 						$tglsurat			= $rCari['tglsurat'];
 						$tujuansurat		= $rCari['tujuansurat'];
@@ -2102,12 +2337,13 @@ elseif($_POST['cariDokSuratKeluar'] == "Cari"){
 					
 						echo"<tr bgcolor='$color'>
 								<td>$no</td>
-								<td>$nomorsuratkeluar</td>
-								<td>$tglsurat</td>
-								<td>$tujuansurat</td>
-								<td>$perihal</td>
+								<td>$nomorsuratkeluar<br />$tglsurat</td>
+								<td nowrap='nowrap'>$tujuansurat</td>
+								<td nowrap='nowrap'>$perihal</td>
 								<td>$nomorsuratmasuk</td>
 								<td><b><i><a href='suratkeluar/$file' target='_blank'>$file</a></b></i></td>
+								<td><form method='post' action='".$_SERVER['PHP_SELF']."'><input type='hidden' name='idsurat' value='".$idsurat."' /><input type='submit' name='ubahsuratkeluar' value='Ubah' class='normaltablesubmit' /></form></td>
+								<td><form method='post' action='".$_SERVER['PHP_SELF']."'><input type='hidden' name='idsurat' value='".$idsurat."' /><input type='submit' name='hapussuratkeluar' value='Hapus' class='normaltablesubmit' /></form></td>
 							</tr>";
 						$no++;
 						}
@@ -2121,6 +2357,137 @@ elseif($_POST['cariDokSuratKeluar'] == "Cari"){
 	}
 }	
 
+// Modul Ubah Surat Keluar ---------------------------------------------------------------
+elseif($_POST['ubahsuratkeluar'] == 'Ubah')
+{
+	echo "<script type=\"text/javascript\">
+			$(document).ready(function() {
+					$('#tglsurat').datepicker();
+			});
+		</script>";
+	$idsurat = $_POST['idsurat'];
+	
+	$qUpdate = mysql_query("SELECT idsurat,nomorsuratkeluar,date_format(tglsurat,'%d/%m/%Y') AS tglsurat,tujuansurat,perihal,nomorsuratkeluar,kodesuratkeluar,file FROM d_suratkeluar WHERE idsurat='$idsurat'");
+	$rUpdate = mysql_fetch_object($qUpdate);
+	
+	$idsurat			= $rUpdate->idsurat;
+	$nomorsuratkeluar 	= $rUpdate->nomorsuratkeluar;
+	$tglsurat			= $rUpdate->tglsurat;
+	$tujuansurat		= $rUpdate->tujuansurat;
+	$perihal			= $rUpdate->perihal;
+	$nomorsuratkeluar	= $rUpdate->nomorsuratkeluar;
+	$kodesuratkeluar	= $rUpdate->kodesuratkeluar;
+	$file				= $rUpdate->file;
+
+	
+		echo "<div id='stylized' class='myform'>
+			<form id='form' name='form' method='post' enctype='multipart/form-data' action='"; echo(htmlentities($_SERVER['PHP_SELF'])); echo "'>
+			<h1>Form update data surat keluar</h1>
+			<p>Form ini digunakan untuk melakukan perubahan data surat keluar</p>
+				
+			<label>Nomor Surat Keluar</label>
+			<input type='text' id='nomorsuratkeluar' minlength='3' name='nomorsuratkeluar' value='$nomorsuratkeluar' maxlength='20' onkeypress='return handleEnter(this, event)' onkeyup=\"moveOnMax(this,'tglsurat')\" />
+			
+			<label>Tgl.Surat Keluar</label>
+			<input type='text' id='tglsurat' name='tglsurat' value='$tglsurat' maxlength='10' onkeypress='return handleEnter(this,event)' onkeyup=\"moveOnMax(this,'asalsurat')\" />
+				
+			<label>Tujuan Surat</label>
+			<input type='text' id='tujuansurat' name='tujuansurat' value='$tujuansurat' maxlength='75' onkeypress='return handleEnter(this,event)' onkeyup=\"moveOnMax(this,'perihal')\" />
+			
+			<label>Perihal</label>
+			<input type='text' id='perihal' name='perihal' value='$perihal' maxlength='120' onkeypress='return handleEnter(this,event)' onkeyup=\"moveOnMax(this,'file')\" />
+			
+			<label>File
+				<span class='small'>Apabila file yang diupload tidak berubah, biarkan kosong.</span>
+				<span class='small'>File awal: <b>$file</b></span>
+			</label>
+			<input type='file' id='file' name='file' maxlength='45' onkeypress='return handleEnter(this,event)' onkeyup=\"moveOnMax(this,'submit')\" />
+			
+			<input type='hidden' value='$idsurat' name='idsurat' />
+			<input type='hidden' value='$file' name='filelama' />
+			<input type='submit' value='Simpan' class='button' id='submit' name='simpanUpdateSuratKeluar' />
+			<div class='spacer'></div>
+			</form>
+			</div>";
+}
+
+// Modul Simpan Edit Surat Keluar ---------------------------------------------------------------
+elseif($_POST['simpanUpdateSuratKeluar'] == 'Simpan')
+{
+	echo "<script type='text/javascript'>
+		$(document).ready(function() {
+			$('#promptkonfirmasi').dialog({
+				modal: true
+			});
+		});
+	</script>";
+	
+	$idsurat			= $_POST['idsurat'];
+	$nomorsuratkeluar	= $_POST['nomorsuratkeluar'];
+	$tglsurat			= $helper->dateConvert($_POST['tglsurat']);
+	$tujuansurat		= $_POST['tujuansurat'];
+	$perihal			= $_POST['perihal'];
+	$filelama			= $_POST['filelama'];
+	
+	$lokasi_file	=$_FILES['file']['tmp_name'];
+	$nama_file		=$_FILES['file']['name'];
+	
+	if($nama_file == 0)
+	{
+		$qUpdate = mysql_query("UPDATE d_suratkeluar SET nomorsuratkeluar='$nomorsuratkeluar',tglsurat='$tglsurat',tujuansurat='$tujuansurat',perihal='$perihal' WHERE idsurat=$idsurat");
+		
+		echo "<div id='promptkonfirmasi' title='Konfirmasi Update Data Surat Keluar'>
+		<center><b>Data surat keluar dengan nomor surat: <font color='#ffff00'><i>" . $nomorsuratkeluar . "</i></font> dan perihal <font color='#ffff00'><i>" . $perihal . "</i></font> berhasil diubah</b></center>
+		<br />
+		<br />
+		<table border='0' align='center'>
+		<form name='form1' method='post' action='"; echo(htmlentities($_SERVER['PHP_SELF'])); echo "'>
+			<tr><td><input type='submit' name='konfirmasirekam' value='Kembali'  /></td>
+		</form>";
+	}
+	else
+	{
+		$qUpdate = mysql_query("UPDATE d_suratkeluar SET nomorsuratkeluar='$nomorsuratkeluar',tglsurat='$tglsurat',tujuansurat='$tujuansurat',perihal='$perihal',file='$nama_file' WHERE idsurat=$idsurat");
+		
+		unlink('suratkeluar/'.basename($filelama));
+		$direktori		= 'suratkeluar/'.basename($nama_file);
+		move_uploaded_file($lokasi_file,$direktori);
+		
+		echo "<div id='promptkonfirmasi' title='Konfirmasi Update Data Surat Keluar'>
+		<center><b>Data surat keluar dengan nomor surat: <font color='#ffff00'><i>" . $nomorsuratkeluar . "</i></font> dan perihal <font color='#ffff00'><i>" . $perihal . "</i></font> berhasil diubah</b></center>
+		<br />
+		<br />
+		<table border='0' align='center'>
+		<form name='form1' method='post' action='"; echo(htmlentities($_SERVER['PHP_SELF'])); echo "'>
+			<tr><td><input type='submit' name='konfirmasirekam' value='Kembali'  /></td>
+		</form>";
+	}
+}
+
+// Modul Hapus Surat Keluar ---------------------------------------------------------------
+elseif($_POST['hapussuratkeluar'] == 'Hapus')
+{
+	echo "<script type='text/javascript'>
+	$(document).ready(function() {
+		$('#promptkonfirmasi').dialog({
+			modal: true
+		});
+	});
+	</script>";
+	
+	$idsurat = $_POST['idsurat'];
+	
+	mysql_query("DELETE FROM d_suratkeluar WHERE idsurat = '$idsurat'");
+	
+	echo "<div id='promptkonfirmasi' title='Konfirmasi Hapus Data Surat Keluar'>
+	<center><b>Data surat keluar telah dihapus</b></center>
+	<br />
+	<br />
+	<table border='0' align='center'>
+	<form name='form1' method='post' action='"; echo(htmlentities($_SERVER['PHP_SELF'])); echo "'>
+		<tr><td><input type='submit' name='konfirmasirekam' value='Kembali'  /></td>
+	</form>";
+}
 // Keluar Aplikasi ===============================================================================//
 elseif($_GET['module'] == 'keluar'){
 	session_start();
