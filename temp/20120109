@@ -1,1 +1,0 @@
-INSERT INTO monitor.d_arsipsp2d(nosp2d,tgsp2d,kdjendok,kddept,kdunit,kdsatker,nokarwas,kddekon,nospm,tgspm) VALUES("288154U", "2012-01-09", "01", "013", "01", "097190", "0001", "KD", "00002", "2012-01-05"),("288155U", "2012-01-09", "01", "013", "01", "626088", "0001", "KD", "00003", "2012-01-06")

@@ -840,6 +840,94 @@ if($_SESSION[leveluser] == 'user' && $_SESSION[seksi] == 'VR'){
 						</div>";
 }
 
+// Satker Menu yang khusus dapat diakses oleh Satker---------------------------//
+if($_SESSION[leveluser] == 'user' && $_SESSION[seksi] == 'STK'){
+		$main=mysql_query("SELECT DISTINCT * FROM mainmenu 
+							WHERE aktif='Y' 
+							AND seksi in ('ALL','STK')
+							AND id_main not in ('10','13')
+							ORDER BY id_main");
+		while($r=mysql_fetch_array($main)){
+		echo "<li><a href='$r[link]'>$r[nama_menu]</a>
+			<ul>";
+			$sub=mysql_query("SELECT * FROM submenu, mainmenu  
+					WHERE submenu.id_main=mainmenu.id_main 
+					AND submenu.id_main=$r[id_main]
+					AND submenu.seksi='STK'
+					ORDER BY submenu.id_sub");
+				while($w=mysql_fetch_array($sub)){
+			echo "<li><a href='$w[link_sub]'>&#187; $w[nama_sub]</a></li>";
+				}
+			echo "</ul>
+			</li>";
+			}       
+			echo "<style type='text/css'>
+					#welcome
+						{
+							font-weight:bold;
+							color: #FF6600;
+							padding-top:9px;
+							margin-left:650px;
+						}
+					#welcome #user
+						{
+							display:inline;
+							font-style:italic;
+							color: #FFFFFF;
+						}
+					#welcome #seksi
+						{
+							display:inline;
+							font-style:italic;
+							color: #FFFF00;
+						}
+					</style>
+					<div id='welcome'>Username:  
+							<div id='user'>"
+								. $_SESSION[namauser]  .
+							"</div>
+							 Seksi: <div id='seksi'>";
+								switch($_SESSION[seksi]){
+									case UM:
+										echo 'Sub Bagian Umum';
+										break;
+									case AUM:
+										echo 'Kasubag Umum';
+										break;
+									case VR:
+										echo 'Verifkasi & Akuntansi';
+										break;
+									case AVR:
+										echo 'Kasi Vera';
+										break;
+									case PD:
+										echo 'Pencairan Dana';
+										break;
+									case APD:
+										echo 'Kasi Pencairan Dana';
+										break;
+									case BP:
+										echo 'Bank & Giro Pos';
+										break;
+									case ABP:
+										echo 'Kasi Bank & Giro Pos';
+										break;
+									case ALL:
+										echo 'Administrator';
+										break;
+									case KK:
+										echo 'Kepala Kantor';
+										break;
+									case STK:
+										echo 'Satuan Kerja';
+										break;
+								}
+							echo "</div>
+						</div>";
+						
+}
+
+
 /*
 
 // Administrator & Seksi Verifikasi dan Akuntansi, Admin, Menu yang khusus dapat diakses semua user ==============//

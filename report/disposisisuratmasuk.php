@@ -213,27 +213,62 @@ $pdf->SetFont('Arial','','6');
 $pdf->Rect(2.5,9.2,0.2,0.2,'D'); //checkbox proses
 $pdf->Cell(2.68,0.4,'Proses',0,'L',0);
 $pdf->Rect(6.1,9.2,0.2,0.2,'D'); //checkbox jawab
+if($_POST['jawab'] == "1")
+{
+	$pdf->Line(6.1,9.2,6.3,9.4);
+	$pdf->Line(6.1,9.4,6.3,9.2);
+}
 $pdf->Cell(3.5,0.4,'Jawab',0,'L',0);
 $pdf->Rect(9.8,9.2,0.2,0.2,'D'); //checkbox simpan
+if($_POST['simpan'] == "1")
+{
+	$pdf->Line(9.8,9.2,10,9.4);
+	$pdf->Line(9.8,9.4,10,9.2);
+}
 $pdf->Cell(3.8,0.4,'Simpan',0,'L',0);
 $pdf->Ln();
 $pdf->Rect(2.5,9.6,0.2,0.2,'D'); //checkbox laksanakan
 $pdf->Cell(3.16,0.4,'Laksanakan',0,'L',0);
 $pdf->Rect(6.1,9.6,0.2,0.2,'D'); //checkbox edarkan
+if($_POST['edarkan'] == "1")
+{
+	$pdf->Line(6.1,9.6,6.3,9.8);
+	$pdf->Line(6.1,9.8,6.3,9.6);
+}
 $pdf->Cell(3.2,0.4,'Edarkan',0,'L',0);
 $pdf->Rect(9.8,9.6,0.2,0.2,'D'); //checkbox ingatkan
+if($_POST['ingatkan'] == "1")
+{
+	$pdf->Line(9.8,9.6,10,9.8);
+	$pdf->Line(9.8,9.8,10,9.6);
+}
 $pdf->Cell(3.73,0.4,'Ingatkan',0,'L',0);
 $pdf->Ln();
 $pdf->Rect(2.5,10,0.2,0.2,'D'); //checkbox pedomani
 $pdf->Cell(2.97,0.4,'Pedomani',0,'L',0);
 $pdf->Rect(6.1,10,0.2,0.2,'D'); //checkbox teliti dan pendapat
+if($_POST['telitipendapat'] == "1")
+{
+	$pdf->Line(6.1,10,6.3,10.2);
+	$pdf->Line(6.1,10.2,6.3,10);
+}
 $pdf->Cell(4.2,0.4,'Teliti & Pendapat',0,'L',0);
 $pdf->Rect(9.8,10,0.2,0.2,'D'); //checkbox perbanyak
 $pdf->Cell(3.8,0.4,'Perbanyak .... kali',0,'L',0);
 $pdf->Ln();
 $pdf->Rect(2.5,10.4,0.2,0.2,'D'); //checkbox untuk diketahui
+if($_POST['untukdiketahui'] == "1")
+{
+	$pdf->Line(2.5,10.4,2.7,10.6);
+	$pdf->Line(2.5,10.6,2.7,10.4);
+}
 $pdf->Cell(3.52,0.4,'Untuk Diketahui',0,'L',0);
 $pdf->Rect(6.1,10.4,0.2,0.2,'D'); //checkbox bicarakan dengan saya
+if($_POST['bicarakandgsaya'] == "1")
+{
+	$pdf->Line(6.1,10.4,6.3,10.6);
+	$pdf->Line(6.1,10.6,6.3,10.4);
+}
 $pdf->Cell(4.3,0.4,'Bicarakan dengan Saya',0,'L',0);
 $pdf->Cell(3.13,0.4,'asli kepada .........',0,'L',0);
 $pdf->Ln(0.7);

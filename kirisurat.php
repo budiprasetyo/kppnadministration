@@ -53,7 +53,7 @@ echo "<style type='text/css'>
 					<label>Perihal
 					<span class='small'>Isikan perihal surat masuk</span>
 					</label>
-					<input type='text' id='perihal' name='perihal'  class='required' minlength='2' maxlength='30' onkeypress='return handleEnter(this,event)' onkeyup=\"moveOnMax(this,'file')\" />
+					<input type='text' id='perihal' name='perihal'  class='required' minlength='2' maxlength='200' onkeypress='return handleEnter(this,event)' onkeyup=\"moveOnMax(this,'file')\" />
 					
 					<label>Upload Surat
 					<span class='small'>Pilih file surat masuk yang telah di-<i>scanning</i> (tanpa spasi)</span>
@@ -68,7 +68,8 @@ echo "<style type='text/css'>
 
 // Modul Rekam Data Surat Masuk ==================================================================================//
 elseif($_GET['module']=='terimasuratmasuk'){
-	$qMaxagd	= mysql_query("SELECT MAX(noagenda) maxAgd FROM d_suratmasuk");
+	$year 		= date('Y');
+	$qMaxagd	= mysql_query("SELECT MAX(noagenda) maxAgd FROM d_suratmasuk WHERE substring(timeloket,1,4) = '$year'");
 	$rMaxagd	= mysql_fetch_array($qMaxagd);
 	
 	//penambahan setiap nomor agenda
@@ -123,7 +124,7 @@ elseif($_GET['module']=='terimasuratmasuk'){
 					<label>Perihal
 					<span class='small'>Isikan perihal surat masuk</span>
 					</label>
-					<input type='text' id='perihal' name='perihal'  class='required' minlength='2' maxlength='30' onkeypress='return handleEnter(this,event)' onkeyup=\"moveOnMax(this,'file')\" />
+					<input type='text' id='perihal' name='perihal'  class='required' minlength='2' maxlength='200' onkeypress='return handleEnter(this,event)' onkeyup=\"moveOnMax(this,'file')\" />
 					
 					<label>Upload Surat
 					<span class='small'>Pilih file surat masuk yang telah di-<i>scanning</i> (tanpa spasi)</span>
@@ -906,7 +907,7 @@ elseif($_GET['module']=='searchsuratmasuk'){
 					
 			<label>Perihal</label>
 			<input type='checkbox' class='checkbox' name='perihalCek' />
-			<input type='text' id='perihal' name='perihal' maxlength='120' onkeypress='return handleEnter(this,event)' onkeyup=\"moveOnMax(this,'submit')\" />
+			<input type='text' id='perihal' name='perihal' maxlength='200' onkeypress='return handleEnter(this,event)' onkeyup=\"moveOnMax(this,'submit')\" />
 			
 			
 			<input type='submit' value='Cari' class='button' id='submit' name='cariDokSuratMasuk' />
@@ -1139,7 +1140,7 @@ elseif($_POST['ubahsuratmasuk'] == 'Ubah')
 			<input type='text' id='asalsurat' name='asalsurat' value='$asalsurat' maxlength='75' onkeypress='return handleEnter(this,event)' onkeyup=\"moveOnMax(this,'perihal')\" />
 			
 			<label>Perihal</label>
-			<input type='text' id='perihal' name='perihal' value='$perihal' maxlength='120' onkeypress='return handleEnter(this,event)' onkeyup=\"moveOnMax(this,'file')\" />
+			<input type='text' id='perihal' name='perihal' value='$perihal' maxlength='200' onkeypress='return handleEnter(this,event)' onkeyup=\"moveOnMax(this,'file')\" />
 			
 			<label>File
 				<span class='small'>Apabila file yang diupload tidak berubah, biarkan kosong.</span>
@@ -1681,7 +1682,7 @@ elseif($_POST['prosessurattanggapan'] == 'Proses'){
 					<label>Perihal
 					<span class='small'>Isikan perihal surat keluar</span>
 					</label>
-					<input type='text' id='perihal' name='perihal'  class='required' minlength='2' maxlength='120' onkeypress='return handleEnter(this,event)' onkeyup=\"moveOnMax(this,'submit')\" />
+					<input type='text' id='perihal' name='perihal'  class='required' minlength='2' maxlength='200' onkeypress='return handleEnter(this,event)' onkeyup=\"moveOnMax(this,'submit')\" />
 					
 					<input type='hidden' name='username' value='$username' />
 					<input type='hidden' name='idsurat' value='$idsurat' />
@@ -1934,7 +1935,7 @@ elseif($_GET['module'] == 'suratkeluarmanual'){
 					<label>Perihal
 					<span class='small'>Isikan perihal surat keluar</span>
 					</label>
-					<input type='text' id='perihal' name='perihal'  class='required' minlength='2' maxlength='120' onkeypress='return handleEnter(this,event)' onkeyup=\"moveOnMax(this,'submit')\" />
+					<input type='text' id='perihal' name='perihal'  class='required' minlength='2' maxlength='200' onkeypress='return handleEnter(this,event)' onkeyup=\"moveOnMax(this,'submit')\" />
 					
 					<input type='hidden' name='username' value='$username' />
 					<input type='submit' value='Rekam' class='button' id='submit' name='Ambilnomorsuratkeluarumum' />
@@ -2033,7 +2034,7 @@ elseif($_GET['module'] == 'suratkeluar'){
 					<label>Perihal
 					<span class='small'>Isikan perihal surat keluar</span>
 					</label>
-					<input type='text' id='perihal' name='perihal'  class='required' minlength='2' maxlength='120' onkeypress='return handleEnter(this,event)' onkeyup=\"moveOnMax(this,'submit')\" />
+					<input type='text' id='perihal' name='perihal'  class='required' minlength='2' maxlength='200' onkeypress='return handleEnter(this,event)' onkeyup=\"moveOnMax(this,'submit')\" />
 					
 					<input type='hidden' name='username' value='$username' />
 					<input type='submit' value='Rekam' class='button' id='submit' name='Ambilnomorsuratkeluarumum' />
@@ -2395,7 +2396,7 @@ elseif($_POST['ubahsuratkeluar'] == 'Ubah')
 			<input type='text' id='tujuansurat' name='tujuansurat' value='$tujuansurat' maxlength='75' onkeypress='return handleEnter(this,event)' onkeyup=\"moveOnMax(this,'perihal')\" />
 			
 			<label>Perihal</label>
-			<input type='text' id='perihal' name='perihal' value='$perihal' maxlength='120' onkeypress='return handleEnter(this,event)' onkeyup=\"moveOnMax(this,'file')\" />
+			<input type='text' id='perihal' name='perihal' value='$perihal' maxlength='200' onkeypress='return handleEnter(this,event)' onkeyup=\"moveOnMax(this,'file')\" />
 			
 			<label>File
 				<span class='small'>Apabila file yang diupload tidak berubah, biarkan kosong.</span>

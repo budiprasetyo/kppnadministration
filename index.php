@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE HTML>
 <html>
   <head>
   <link rel="stylesheet" type="text/css" href="templates/loginstyle.css">
@@ -29,29 +29,38 @@
 	    });
 	  </script>	
   </head>
-    <body OnLoad="document.login.username.focus();">
-     <div id="wrapper">
-      <div id="header">
-      
-       <form class="expose" method="post" action="cek_login.php">
-	     <label for="username">Username</label>
-	     <input id="username" name="username" autofocus="autofocus" /><br />
-
-	     <label for="password">Password</label>
-	     <input id="password" type="password" name="password" /><br />
-	     <input type="submit" value="LOGIN" /><br />
-      </form>
-      </div>
-      	<div id="footer">
-			Copyleft 
-			<span style="transform:rotate(180deg);
-					-webkit-transform:rotate(180deg);
-					-moz-transform:rotate(180deg);
-					-o-transform:rotate(180deg);
-					filter:progid:DXImageTransform.Microsoft.BasicImage(rotation=2); 
-					display: inline-block;">&copy;
-			</span> 2012 Direktorat Sistem Perbendaharaan. All wrongs reserved.
+    <body>
+			<div id="title">
+				<div id="logo"></div>
+				<div id="title_apps">Aplikasi Administrasi dan Monitoring KPPN</div>
+				<?php
+					include_once("config/koneksi.php");
+					$query 	= "SELECT versi from versi";
+					$qVersi	= mysql_query($query);
+					$rVersi	= mysql_fetch_object($qVersi);
+				?>
+				<div id="title_appsversion">Versi <?php echo $rVersi->versi; ?></div>
 			</div>
-      </div>
+			<div id="header">
+			  
+				   <form name="login" class="expose" method="post" action="cek_login.php">
+					 <label for="username">Username</label>
+					 <input id="username" name="username" autofocus="autofocus" /><br />
+
+					 <label for="password">Password</label>
+					 <input id="password" type="password" name="password" /><br />
+					 <input type="submit" value="LOGIN" /><br />
+				  </form>
+			</div>
+			<div id="footer">
+				Copyleft 
+				<span style="transform:rotate(180deg);
+						-webkit-transform:rotate(180deg);
+						-moz-transform:rotate(180deg);
+						-o-transform:rotate(180deg);
+						filter:progid:DXImageTransform.Microsoft.BasicImage(rotation=2); 
+						display: inline-block;">&copy;
+				</span> 2012 Direktorat Sistem Perbendaharaan. All wrongs reserved.
+			</div>
   </body>
 </html>

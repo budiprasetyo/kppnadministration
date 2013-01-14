@@ -18,6 +18,8 @@ elseif($_GET['module']=='rekamnoarsip'){
 			
 			<br />
 			<br />
+				<input type='submit' class='normaltablesubmit' name='btnEarsip' value='Tambah' />
+			</form>
 			<div id='normaltable'>
 			<table class='normaltable' width='100%'>
 			<tr>
@@ -26,6 +28,7 @@ elseif($_GET['module']=='rekamnoarsip'){
 					<th width='20%'>Nomor Rak</th>
 					<th width='20%'>Nomor Baris</th>
 					<th width='20%'>Nomor Box</th>
+					<th width='20%' colspan='2'>Tindakan</th>
 			</tr>";
 			
 			$q_refArsip			= mysql_query("SELECT * FROM r_nomorarsipsp2d ORDER BY kddept,norak,nobaris,nobox");
@@ -41,17 +44,32 @@ elseif($_GET['module']=='rekamnoarsip'){
 					<td>$r_refArsip[2]</td>
 					<td>$r_refArsip[3]</td>
 					<td>$r_refArsip[4]</td>
+					<td>
+						<form id='frm_rarsip' method='post' action='".htmlentities($_SERVER['PHP_SELF'])."'>
+						<input type='hidden' name='id' value='$r_refArsip[0]' />
+						<input type='submit' name='btnEarsip' value='Edit' class='normaltablesubmit' />
+						</form>
+					</td>
+					<td>
+						<form id='frm_rarsip' method='post' action='".htmlentities($_SERVER['PHP_SELF'])."'>
+						<input type='hidden' name='id' value='$r_refArsip[0]' />
+						<input type='submit' name='btnHarsip' value='Hapus' class='normaltablesubmit' />
+						</form>
+					</td>
 				</tr>";
 				$no++;
 			}
 			echo "</table>
-			</div>
-			<br />
-			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type='submit' class='normaltablesubmit' name='showFormrekam' value='Tambah' />
-			</form>";
+			</div>";
 }
 // Modul Form Perekaman Referensi Arsip -----------------------------------------------------------------------------------------------------------------------------//
-elseif($_POST['showFormrekam'] == 'Tambah'){			
+elseif($_POST['btnEarsip']){	
+		$id		= $_POST['id'];
+		$query	= "SELECT id_nomorarsip, kddept, norak, nobaris,nobox FROM r_nomorarsipsp2d WHERE id_nomorarsip = '$id'";
+		$qArsip	= mysql_query($query);
+		$rArsip	= mysql_fetch_object($qArsip);
+		$Nobox	= substr($rArsip->nobox, 3, 3);
+		
 		echo "<style type='text/css'>
 			em { font-weight: bold; padding-right: 1em; vertical-align: top; }
 			</style>
@@ -67,71 +85,95 @@ elseif($_POST['showFormrekam'] == 'Tambah'){
 					<label>Kode Dept
 					<span class='small'>Isikan kode dept</span>
 					</label>
-					<input type='text' id='kddept' class='required' minlength='3' name='kddept' maxlength='3' onkeypress='return handleEnter(this, event)' onkeyup=\"moveOnMax(this,'norak')\" />
+					<input type='text' value='".$rArsip->kddept."' id='kddept' class='required' minlength='3' name='kddept' maxlength='3' onkeypress='return handleEnter(this, event)' onkeyup=\"moveOnMax(this,'norak')\" />
 	
 					<label>Nomor Rak
 					<span class='small'>Isikan nomor alokasi rak</span>
 					</label>
-					<input type='text' id='norak' name='norak' class='required' minlength='1' maxlength='4' onkeypress='return handleEnter(this,event)' onkeyup=\"moveOnMax(this,'nobaris')\" />
+					<input type='text' value='".$rArsip->norak."' id='norak' name='norak' class='required' minlength='1' maxlength='4' onkeypress='return handleEnter(this,event)' onkeyup=\"moveOnMax(this,'nobaris')\" />
 					
 					<label>Nomor Baris
 					<span class='small'>Isikan nomor alokasi baris</span>
 					</label>
-					<input type='text' id='nobaris' name='nobaris'  class='required' minlength='1' maxlength='4' onkeypress='return handleEnter(this,event)' onkeyup=\"moveOnMax(this,'nobox')\" />
+					<input type='text' value='".$rArsip->nobaris."' id='nobaris' name='nobaris'  class='required' minlength='1' maxlength='4' onkeypress='return handleEnter(this,event)' onkeyup=\"moveOnMax(this,'nobox')\" />
 					
 					<label>Nomor Box
 					<span class='small'>Isikan alokasi nomor box</span>
 					</label>
-					<input type='text' id='nobox' name='nobox'  class='required' minlength='1' maxlength='2' onkeypress='return handleEnter(this,event)' onkeyup=\"moveOnMax(this,'submit')\" />
+					<input type='text' id='nobox' value='".$Nobox."' name='nobox'  class='required' minlength='1' maxlength='6' onkeypress='return handleEnter(this,event)' onkeyup=\"moveOnMax(this,'submit')\" />
 					
-					<input type='submit' value='Rekam' class='button' id='submit' name='Insertnoarsip' />
+					<input type='hidden' name='id' value='".$rArsip->id_nomorarsip."' />
+					<input type='submit' value='Simpan' class='button' id='submit' name='btnUarsip' />
 					<div class='spacer'></div>
 			</form>
 		</div>";
 }
 
 // Modul Insert Nomor Arsip ---------------------------------------------------------------------------------------------------------------------------------------------------------------------/
-elseif($_POST['Insertnoarsip']=='Rekam'){
+elseif($_POST['btnUarsip'] == 'Simpan'){
+	echo "<script type='text/javascript'>
+			$(document).ready(function() {
+				$('#promptkonfirmasi').dialog({
+					modal: true
+				});
+			});
+	</script>";	
+	$id		= $_POST['id'];
 	$kddept	= $_POST['kddept'];
 	$noRak	= $_POST['norak'];
 	$norak	= sprintf("%04s",$noRak);
 	$noBaris	= $_POST['nobaris'];
 	$nobaris	= sprintf("%04s",$noBaris);
 	$noBox	= $_POST['nobox'];
-	$Nobox	= sprintf("%02s",$noBox);
+	$Nobox	= sprintf("%03s",$noBox);
 	$nobox	= $kddept.$Nobox;
-	// Pengecekan bahwa data tersebut belum ada pada database
-	$qCdata	= mysql_query("SELECT * FROM r_nomorarsipsp2d
-						WHERE kddept='$kddept' AND norak='$norak' AND nobaris='$nobaris' AND nobox='$nobox'");
-	$rCdata	= mysql_fetch_row($qCdata);
-	if(!$rCdata){
-		// Apabila data belum ada maka proses inserting dilanjutkan
-		$qI		= mysql_query("INSERT INTO r_nomorarsipsp2d(kddept,norak,nobaris,nobox)
-							VALUES ('$kddept','$norak','$nobaris','$nobox')");
-		$qC		= mysql_query("SELECT * FROM r_nomorarsipsp2d 
-						WHERE kddept='$kddept' AND norak='$norak' AND nobaris='$nobaris' AND nobox='$nobox'");
-		$rC		= mysql_fetch_row($qC);
-		// Informasi bahwa data gagal di-insert
+	
+	if($id == '')
+	{
+		$query = "SELECT id_nomorarsip, kddept, norak, nobaris, nobox FROM r_nomorarsipsp2d WHERE kddept='$kddept' AND norak='$norak' AND nobaris='$nobaris' AND nobox='$nobox'";
+		
+		$qCek	= mysql_query($query);
+		$rCek	= mysql_num_rows($qCek);
+		
+		if(!$rCek){
+			$query 		= "REPLACE r_nomorarsipsp2d SET kddept='$kddept', norak='$norak', nobaris='$nobaris', nobox='$nobox'";
+			$qArsip= mysql_query($query);
+		}else{
+			echo "
+			<div id='promptkonfirmasi' title='informasi'>
+				<br />
+				<center>
+				<b><font color='#FFFFFF' size='4'>Data tersebut sudah ada</font></b>
+				<br />
+				<br />
+			</div>";
+		}
+		
+	}else{
+		$query		= "UPDATE r_nomorarsipsp2d SET kddept='$kddept', norak='$norak', nobaris='$nobaris', nobox='$nobox' WHERE id_nomorarsip='$id'";
+		$qArsip 	= mysql_query($query);
+	}
+	echo "
+	<script type='text/javascript'>
+		setTimeout(
+		function()
+			{window.location.replace('media.php?module=rekamnoarsip');},
+			1000
+		);
+	</script>";
+	
+}
 
-		if(!$rC){
-			echo "<script type='text/javascript'>
-					alert('Data gagal direkam!');
-					self.history.back(-1);
-				</script>";
-		}
-		else {
-			echo "<script type='text/javascript'>
-					alert('Data berhasil direkam');
-					window.location='media.php?module=rekamnoarsip';
-				</script>";
-		}
-	}
-	else {
-		echo "<script type='text/javascript'>
-				alert('Data pernah direkam!');
-				self.history.back(-1);
-		</script>";
-	}
+// Modul Hapus Referensi Arsip -----------------------------------------------------------------------------//
+elseif($_POST['btnHarsip'] == 'Hapus')
+{
+	$id			= $_POST['id'];
+	$q			= "DELETE FROM r_nomorarsipsp2d WHERE id_nomorarsip='$id'";
+	mysql_query($q);
+	echo "
+	<script type='text/javascript'>
+		window.location.replace('media.php?module=rekamnoarsip');
+	</script>";
 }
 
 // Modul Load ke Tabel Arsip ========================================================================================//
@@ -190,6 +232,10 @@ elseif($_POST['loadKeTabelArsip']=='Load'){
 			window.location.replace('media.php?module=loadketabelarsip');
 		</script>";
 	}
+	elseif(substr($tanggal1,0,4) == '2013' && substr($tanggal2,0,4) == '2013')
+	{
+		$koneksi = "config/koneksisp2d13.php";
+	}
 	elseif(substr($tanggal1,0,4) == '2012' && substr($tanggal2,0,4) == '2012')
 	{
 		$koneksi = "config/koneksisp2d.php";
@@ -230,7 +276,7 @@ elseif($_POST['loadKeTabelArsip']=='Load'){
 		 
 		/* For unix family, start here */
 		mysql_query($qInsert);
-		$output = shell_exec('mysql -uroot -P3306 -hlocalhost -pM3t@m0rph monitor < /var/www/temp/'.$filename);
+		$output = shell_exec('mysql -uroot -P3306 -hlocalhost -pM3t@m0rph monitor < /var/www/monitor/temp/'.$filename);
 		/* end here */
 		echo "
 			<script type='text/javascript'>
@@ -1366,7 +1412,7 @@ elseif($_GET['module'] == 'referensigudang')
 					<tr>
 							<th width='5%'>No.</th>
 							<th width='10%'>Nama Gudang</th>
-							<th width='60%'>Keterangang Gudang</th>
+							<th width='60%'>Keterangan Gudang</th>
 							<th width='20%' colspan='2'>Tindakan</th>
 					</tr>";
 					$qGudang	= mysql_query("SELECT * FROM r_gudang ORDER BY id_gudang DESC");
@@ -1514,6 +1560,524 @@ elseif($_POST['btnHgudang'] == 'Hapus')
 		window.location.replace('media.php?module=referensigudang');
 	</script>";
 }
+
+// Modul Referensi Rak =================================================================================//
+elseif($_GET['module'] == 'referensirak')
+{
+	echo "<div id='stylized' class='myform'>
+			<form id='form' name='form' method='post' action='".htmlentities($_SERVER['PHP_SELF'])."'>
+			<h1>Tabel Referensi Rak</h1>
+			<p>Tabel referensi rak</p>
+			</div>
+			</form>
+			
+			<br />
+			<br />
+			<form method='post' action='".htmlentities($_SERVER['PHP_SELF'])."'>
+				<input type='submit' name='btnErak' value='Tambah Data' class='normaltablesubmit' style='width:100px !important;' />
+			</form>
+			<br />
+			<div id='normaltable'>
+				<table class='normaltable' width='100%'>
+					<tr>
+							<th width='5%'>No.</th>
+							<th width='10%'>Kode Rak</th>
+							<th width='60%'>Keterangan Rak</th>
+							<th width='20%' colspan='2'>Tindakan</th>
+					</tr>";
+					$qRak	= mysql_query("SELECT * FROM r_rak ORDER BY id_rak DESC");
+					$i	= 1;
+					$oddcol			= "#CCFF99";
+					$evencol		= "#CCDD88";
+					while($rRak = mysql_fetch_object($qRak))
+					{
+						if($i % 2 == 0) {$color = $evencol;}
+						else{$color = $oddcol;}
+						$id			= $rRak->id_rak;
+						$kdrak		= $rRak->kd_rak;
+						$ketrak		= $rRak->ket_rak;
+						echo "
+						<tr>
+							<td>".$i."</td>
+							<td>".$kdrak."</td>
+							<td>".$ketrak."</td>
+							<td>
+								<form id='frm_rrak' method='post' action='".htmlentities($_SERVER['PHP_SELF'])."'>
+								<input type='hidden' name='id' value='$id' />
+								<input type='submit' name='btnErak' value='Edit' class='normaltablesubmit' />
+								</form>
+							</td>
+							<td>
+								<form id='frm_rrak' method='post' action='".htmlentities($_SERVER['PHP_SELF'])."'>
+								<input type='hidden' name='id' value='$id' />
+								<input type='submit' name='btnHrak' value='Hapus' class='normaltablesubmit' />
+								</form>
+							</td>
+						</tr>";
+						$i++;
+					}
+				echo"
+				</table>
+			</div>";
+}
+
+// Modul Edit Referensi Rak ------------------------------------------------------------------------------//
+elseif($_POST['btnErak'])
+{
+	
+	$id_rak		= $_POST['id'];
+	$q			= "SELECT * FROM r_rak WHERE id_rak = '$id_rak' LIMIT 1";
+	$qRak 		= mysql_query($q);
+	$rRak	 	= mysql_fetch_object($qRak);
+	$kdrak		= $rRak->kd_rak;
+	$ketrak		= $rRak->ket_rak;
+	$id			= $rRak->id_rak;
+
+	echo"
+	<style type='text/css'>
+		em { font-weight: bold; padding-right: 1em; vertical-align: top; }
+	</style>
+	<script>
+	$(document).ready(function(){
+		$('#form').validate();
+	});
+	</script>
+		<div id='stylized' class='myform'>
+		<form id='form' name='form' method='post' enctype='multipart/form-data' action='".htmlentities($_SERVER['PHP_SELF'])."'>
+		<h1>Form data referensi rak</h1>
+		<p>Form ini digunakan dalam melakukan perekaman/perubahan data referensi Rak</p>
+		<h3>Data Referensi Rak</h3>
+		<p></p>
+				
+		<label>Kode Rak
+		<span class='small'>Kode Rak</span>
+		</label>
+		<input type='text' id='kdrak'name='kdrak' minlength='1'  maxlength='4' value='$kdrak' onkeypress='return handleEnter(this, event)' onkeyup=\"moveOnMax(this,'ketrak')\" autofocus='autofocus' />
+
+		<label>Keterangan Rak
+		<span class='small'>Keterangan Rak</span>
+		</label>
+		<input type='text' id='ketrak' name='ketrak'  value='$ketrak' minlength='2' maxlength='75' onkeypress='return handleEnter(this,event)' onkeyup=\"moveOnMax(this,'submit')\" />
+		
+		
+		<input type='hidden' name='id_rak' value='$id' />
+		<input type='submit' value='Simpan' class='button' id='submit' name='btnUrak' />
+		<div class='spacer'></div>
+		</form>
+		</div>";
+}
+
+// Modul Update Referensi Rak -----------------------------------------------------------------------------//
+elseif($_POST['btnUrak'] == 'Simpan')
+{
+	echo "<script type='text/javascript'>
+			$(document).ready(function() {
+				$('#promptkonfirmasi').dialog({
+					modal: true
+				});
+			});
+	</script>";	
+	
+	$id			= $_POST['id_rak'];
+	$kdrak		= strtoupper($_POST['kdrak']);
+	$ketrak		= $_POST['ketrak'];
+	if($id == "")
+	{
+		$q		= "SELECT kd_rak FROM r_rak WHERE kd_rak LIKE '%$kdrak%'";
+		$qCek	= mysql_query($q);
+		$rCek	= mysql_num_rows($qCek);
+		if(!$rCek)
+		{
+			$q 		= "REPLACE r_rak SET kd_rak='$kdrak',ket_rak='$ketrak'";
+			$qRak	= mysql_query($q);
+		}
+		else
+		{
+			echo "
+			<div id='promptkonfirmasi' title='informasi'>
+				<br />
+				<center>
+				<b><font color='#FFFFFF' size='4'>Data dengan kode rak $kdrak tersebut sudah ada</font></b>
+				<br />
+				<br />
+			</div>";
+		}
+	}
+	else
+	{
+		$q		= "UPDATE r_rak SET kd_rak='$kdrak',ket_rak='$ketrak' WHERE id_rak='$id'";
+		$qRak	= mysql_query($q);
+	}
+	
+	echo "
+	<script type='text/javascript'>
+		setTimeout(
+		function()
+			{window.location.replace('media.php?module=referensirak');},
+			1500
+		);
+	</script>";
+}
+
+// Modul Hapus Referensi Rak -----------------------------------------------------------------------------//
+elseif($_POST['btnHrak'] == 'Hapus')
+{
+	$id			= $_POST['id'];
+	$q			= "DELETE FROM r_rak WHERE id_rak='$id'";
+	mysql_query($q);
+	echo "
+	<script type='text/javascript'>
+		window.location.replace('media.php?module=referensirak');
+	</script>";
+}
+
+// Modul Referensi Baris =================================================================================//
+elseif($_GET['module'] == 'referensibaris')
+{
+	echo "<div id='stylized' class='myform'>
+			<form id='form' name='form' method='post' action='".htmlentities($_SERVER['PHP_SELF'])."'>
+			<h1>Tabel Referensi Baris</h1>
+			<p>Tabel referensi baris</p>
+			</div>
+			</form>
+			
+			<br />
+			<br />
+			<form method='post' action='".htmlentities($_SERVER['PHP_SELF'])."'>
+				<input type='submit' name='btnEbaris' value='Tambah Data' class='normaltablesubmit' style='width:100px !important;' />
+			</form>
+			<br />
+			<div id='normaltable'>
+				<table class='normaltable' width='100%'>
+					<tr>
+							<th width='5%'>No.</th>
+							<th width='10%'>Kode Baris</th>
+							<th width='60%'>Keterangan Baris</th>
+							<th width='20%' colspan='2'>Tindakan</th>
+					</tr>";
+					$qBaris	= mysql_query("SELECT * FROM r_baris ORDER BY id_baris DESC");
+					$i	= 1;
+					$oddcol			= "#CCFF99";
+					$evencol		= "#CCDD88";
+					while($rBaris = mysql_fetch_object($qBaris))
+					{
+						if($i % 2 == 0) {$color = $evencol;}
+						else{$color = $oddcol;}
+						$id			= $rBaris->id_baris;
+						$kdbaris	= $rBaris->kd_baris;
+						$ketbaris	= $rBaris->ket_baris;
+						echo "
+						<tr>
+							<td>".$i."</td>
+							<td>".$kdbaris."</td>
+							<td>".$ketbaris."</td>
+							<td>
+								<form id='frm_rbaris' method='post' action='".htmlentities($_SERVER['PHP_SELF'])."'>
+								<input type='hidden' name='id' value='$id' />
+								<input type='submit' name='btnEbaris' value='Edit' class='normaltablesubmit' />
+								</form>
+							</td>
+							<td>
+								<form id='frm_rbaris' method='post' action='".htmlentities($_SERVER['PHP_SELF'])."'>
+								<input type='hidden' name='id' value='$id' />
+								<input type='submit' name='btnHbaris' value='Hapus' class='normaltablesubmit' />
+								</form>
+							</td>
+						</tr>";
+						$i++;
+					}
+				echo"
+				</table>
+			</div>";
+}
+
+// Modul Edit Referensi Baris ------------------------------------------------------------------------------//
+elseif($_POST['btnEbaris'])
+{
+	
+	$id_baris	= $_POST['id'];
+	$q			= "SELECT * FROM r_baris WHERE id_baris = '$id_baris' LIMIT 1";
+	$qBaris		= mysql_query($q);
+	$rBaris	 	= mysql_fetch_object($qBaris);
+	$kdbaris	= $rBaris->kd_baris;
+	$ketbaris	= $rBaris->ket_baris;
+	$id			= $rBaris->id_baris;
+
+	echo"
+	<style type='text/css'>
+		em { font-weight: bold; padding-right: 1em; vertical-align: top; }
+	</style>
+	<script>
+	$(document).ready(function(){
+		$('#form').validate();
+	});
+	</script>
+		<div id='stylized' class='myform'>
+		<form id='form' name='form' method='post' enctype='multipart/form-data' action='".htmlentities($_SERVER['PHP_SELF'])."'>
+		<h1>Form data referensi baris</h1>
+		<p>Form ini digunakan dalam melakukan perekaman/perubahan data referensi baris</p>
+		<h3>Data Referensi Baris</h3>
+		<p></p>
+				
+		<label>Kode Baris
+		<span class='small'>Kode Baris</span>
+		</label>
+		<input type='text' id='kdbaris'name='kdbaris' minlength='1'  maxlength='5' value='$kdbaris' onkeypress='return handleEnter(this, event)' onkeyup=\"moveOnMax(this,'ketbaris')\" autofocus='autofocus' />
+
+		<label>Keterangan Baris
+		<span class='small'>Keterangan Baris</span>
+		</label>
+		<input type='text' id='ketbaris' name='ketbaris'  value='$ketbaris' minlength='2' maxlength='75' onkeypress='return handleEnter(this,event)' onkeyup=\"moveOnMax(this,'submit')\" />
+		
+		
+		<input type='hidden' name='id_baris' value='$id' />
+		<input type='submit' value='Simpan' class='button' id='submit' name='btnUbaris' />
+		<div class='spacer'></div>
+		</form>
+		</div>";
+}
+
+// Modul Update Referensi Baris -----------------------------------------------------------------------------//
+elseif($_POST['btnUbaris'] == 'Simpan')
+{
+	echo "<script type='text/javascript'>
+			$(document).ready(function() {
+				$('#promptkonfirmasi').dialog({
+					modal: true
+				});
+			});
+	</script>";	
+	
+	$id			= $_POST['id_baris'];
+	$kdbaris	= strtoupper($_POST['kdbaris']);
+	$ketbaris	= $_POST['ketbaris'];
+	if($id == "")
+	{
+		$q		= "SELECT kd_baris FROM r_baris WHERE kd_baris LIKE '%$kdbaris%'";
+		$qCek	= mysql_query($q);
+		$rCek	= mysql_num_rows($qCek);
+		if(!$rCek)
+		{
+			$q 		= "REPLACE r_baris SET kd_baris='$kdbaris',ket_baris='$ketbaris'";
+			$qBaris = mysql_query($q);
+		}
+		else
+		{
+			echo "
+			<div id='promptkonfirmasi' title='informasi'>
+				<br />
+				<center>
+				<b><font color='#FFFFFF' size='4'>Data dengan kode baris $kdbaris tersebut sudah ada</font></b>
+				<br />
+				<br />
+			</div>";
+		}
+	}
+	else
+	{
+		$q		= "UPDATE r_baris SET kd_baris='$kdbaris',ket_baris='$ketbaris' WHERE id_baris='$id'";
+		$qBaris = mysql_query($q);
+	}
+	
+	echo "
+	<script type='text/javascript'>
+		setTimeout(
+		function()
+			{window.location.replace('media.php?module=referensibaris');},
+			1500
+		);
+	</script>";
+}
+
+// Modul Hapus Referensi Baris -----------------------------------------------------------------------------//
+elseif($_POST['btnHbaris'] == 'Hapus')
+{
+	$id			= $_POST['id'];
+	$q			= "DELETE FROM r_baris WHERE id_baris='$id'";
+	mysql_query($q);
+	echo "
+	<script type='text/javascript'>
+		window.location.replace('media.php?module=referensibaris');
+	</script>";
+}
+
+
+
+
+
+// Modul Referensi Box =================================================================================//
+elseif($_GET['module'] == 'referensibox')
+{
+	echo "<div id='stylized' class='myform'>
+			<form id='form' name='form' method='post' action='".htmlentities($_SERVER['PHP_SELF'])."'>
+			<h1>Tabel Referensi Box</h1>
+			<p>Tabel referensi box</p>
+			</div>
+			</form>
+			
+			<br />
+			<br />
+			<form method='post' action='".htmlentities($_SERVER['PHP_SELF'])."'>
+				<input type='submit' name='btnEbox' value='Tambah Data' class='normaltablesubmit' style='width:100px !important;' />
+			</form>
+			<br />
+			<div id='normaltable'>
+				<table class='normaltable' width='100%'>
+					<tr>
+							<th width='5%'>No.</th>
+							<th width='10%'>Kode Box</th>
+							<th width='60%'>Keterangan Box</th>
+							<th width='20%' colspan='2'>Tindakan</th>
+					</tr>";
+					$qBox	= mysql_query("SELECT * FROM r_box ORDER BY id_box DESC");
+					$i	= 1;
+					$oddcol			= "#CCFF99";
+					$evencol		= "#CCDD88";
+					while($rBox = mysql_fetch_object($qBox))
+					{
+						if($i % 2 == 0) {$color = $evencol;}
+						else{$color = $oddcol;}
+						$id			= $rBox->id_box;
+						$kdbox		= $rBox->kd_box;
+						$ketbox		= $rBox->ket_box;
+						echo "
+						<tr>
+							<td>".$i."</td>
+							<td>".$kdbox."</td>
+							<td>".$ketbox."</td>
+							<td>
+								<form id='frm_rbox' method='post' action='".htmlentities($_SERVER['PHP_SELF'])."'>
+								<input type='hidden' name='id' value='$id' />
+								<input type='submit' name='btnEbox' value='Edit' class='normaltablesubmit' />
+								</form>
+							</td>
+							<td>
+								<form id='frm_rbox' method='post' action='".htmlentities($_SERVER['PHP_SELF'])."'>
+								<input type='hidden' name='id' value='$id' />
+								<input type='submit' name='btnHbox' value='Hapus' class='normaltablesubmit' />
+								</form>
+							</td>
+						</tr>";
+						$i++;
+					}
+				echo"
+				</table>
+			</div>";
+}
+
+// Modul Edit Referensi Box ------------------------------------------------------------------------------//
+elseif($_POST['btnEbox'])
+{
+	
+	$id_box		= $_POST['id'];
+	$q			= "SELECT * FROM r_box WHERE id_box = '$id_box' LIMIT 1";
+	$qBox		= mysql_query($q);
+	$rBox	 	= mysql_fetch_object($qBox);
+	$kdbox		= $rBox->kd_box;
+	$ketbox		= $rBox->ket_box;
+	$id			= $rBox->id_box;
+
+	echo"
+	<style type='text/css'>
+		em { font-weight: bold; padding-right: 1em; vertical-align: top; }
+	</style>
+	<script>
+	$(document).ready(function(){
+		$('#form').validate();
+	});
+	</script>
+		<div id='stylized' class='myform'>
+		<form id='form' name='form' method='post' enctype='multipart/form-data' action='".htmlentities($_SERVER['PHP_SELF'])."'>
+		<h1>Form data referensi box</h1>
+		<p>Form ini digunakan dalam melakukan perekaman/perubahan data referensi box</p>
+		<h3>Data Referensi Box</h3>
+		<p></p>
+				
+		<label>Kode Box
+		<span class='small'>Kode Box</span>
+		</label>
+		<input type='text' id='kdbox'name='kdbox' minlength='1'  maxlength='5' value='$kdbox' onkeypress='return handleEnter(this, event)' onkeyup=\"moveOnMax(this,'ketbox')\" autofocus='autofocus' />
+
+		<label>Keterangan Box
+		<span class='small'>Keterangan Box</span>
+		</label>
+		<input type='text' id='ketbox' name='ketbox'  value='$ketbox' minlength='2' maxlength='75' onkeypress='return handleEnter(this,event)' onkeyup=\"moveOnMax(this,'submit')\" />
+		
+		
+		<input type='hidden' name='id_box' value='$id' />
+		<input type='submit' value='Simpan' class='button' id='submit' name='btnUbox' />
+		<div class='spacer'></div>
+		</form>
+		</div>";
+}
+
+// Modul Update Referensi Box -----------------------------------------------------------------------------//
+elseif($_POST['btnUbox'] == 'Simpan')
+{
+	echo "<script type='text/javascript'>
+			$(document).ready(function() {
+				$('#promptkonfirmasi').dialog({
+					modal: true
+				});
+			});
+	</script>";	
+	
+	$id			= $_POST['id_box'];
+	$kdbox		= strtoupper($_POST['kdbox']);
+	$ketbox		= $_POST['ketbox'];
+	if($id == "")
+	{
+		$q		= "SELECT kd_box FROM r_box WHERE kd_box LIKE '%$kdbox%'";
+		$qCek	= mysql_query($q);
+		$rCek	= mysql_num_rows($qCek);
+		if(!$rCek)
+		{
+			$q 		= "REPLACE r_box SET kd_box='$kdbox',ket_box='$ketbox'";
+			$qBox	= mysql_query($q);
+		}
+		else
+		{
+			echo "
+			<div id='promptkonfirmasi' title='informasi'>
+				<br />
+				<center>
+				<b><font color='#FFFFFF' size='4'>Data dengan kode box $kdbox tersebut sudah ada</font></b>
+				<br />
+				<br />
+			</div>";
+		}
+	}
+	else
+	{
+		$q		= "UPDATE r_box SET kd_box='$kdbox',ket_box='$ketbox' WHERE id_box='$id'";
+		$qBox	= mysql_query($q);
+	}
+	
+	echo "
+	<script type='text/javascript'>
+		setTimeout(
+		function()
+			{window.location.replace('media.php?module=referensibox');},
+			1500
+		);
+	</script>";
+}
+
+// Modul Hapus Referensi Baris -----------------------------------------------------------------------------//
+elseif($_POST['btnHbox'] == 'Hapus')
+{
+	$id			= $_POST['id'];
+	$q			= "DELETE FROM r_box WHERE id_box='$id'";
+	mysql_query($q);
+	echo "
+	<script type='text/javascript'>
+		window.location.replace('media.php?module=referensibox');
+	</script>";
+}
+
+
+
+
 
 // Modul Print Label Arsip ===================================================================================//
 elseif($_GET['module']=='printlabelarsip'){
@@ -1996,8 +2560,8 @@ elseif($_POST['btnEkppn'])
 		
 		<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
 		<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
-		<br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
-		<br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+		<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+		<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
 		<p></p>
 			<h3>Data Referensi Kanwil</h3>
 		<p></p>
@@ -2015,12 +2579,12 @@ elseif($_POST['btnEkppn'])
 		<label>Referensi WPB
 		<span class='small'>Nomor WPB</span>
 		</label>
-		<input type='text' id='wpb' name='wpb' value='$wpb'  minlength='3' maxlength='3' onkeypress='return handleEnter(this,event)' onkeyup=\"moveOnMax(this,'kp')\" />
+		<input type='text' id='wpb' name='wpb' value='$wpb'  minlength='2' maxlength='4' onkeypress='return handleEnter(this,event)' onkeyup=\"moveOnMax(this,'kp')\" />
 							
 		<label>Referensi KP
 		<span class='small'>Nomor KP</span>
 		</label>
-		<input type='text' id='kp' name='kp' value='$kp'  minlength='2' maxlength='2' onkeypress='return handleEnter(this,event)' onkeyup=\"moveOnMax(this,'submit')\" />
+		<input type='text' id='kp' name='kp' value='$kp'  minlength='2' maxlength='4' onkeypress='return handleEnter(this,event)' onkeyup=\"moveOnMax(this,'submit')\" />
 				
 		<input type='submit' value='Simpan' class='button' id='submit' name='btnUkppn' />
 		<div class='spacer'></div>

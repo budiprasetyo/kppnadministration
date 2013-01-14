@@ -1,4 +1,59 @@
 
+
+body {
+	font-family:"trebuchet ms",verdana;
+	height: 500px;
+	/* gradient background */
+	background-color: #B4D675;/* for non-css3 browsers */
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#E7F2D3', endColorstr='#B4D675'); /* for IE */
+	background: -webkit-gradient(linear, left top, left bottom, from(#E7F2D3), to(#B4D675)); /* for webkit browsers */
+	background: -moz-linear-gradient(top,  #E7F2D3,  #B4D675); /* for firefox 3.6+ */ 
+}
+#title{
+	float: left;
+}
+#logo{
+	background-attachment: scroll;
+    background-clip: border-box;
+    background-color: transparent;
+    background-image: url("images/logodepkeu.png");
+    background-origin: padding-box;
+    background-position: left top;
+    background-repeat: no-repeat;
+    background-size: 50px 50px;
+    float: left;
+    width: 50px;
+    height: 50px;
+    margin-left: 0px;
+    margin-right: 10px;
+    margin-top: -60px;
+}
+#title_apps{
+    padding-left: 70px;
+    margin-left: 0px;
+    margin-top: -50px;
+    font-size: 18px;
+	text-shadow: 1px 1px 2px #404040;
+}
+#title_appsversion{
+    padding-left: 70px;
+    margin-left: 0px;
+    font-size: 14px;
+	text-shadow: 1px 1px 2px #404040;
+}
+#header {
+	margin: 270px 0 0 -210px;
+	width: 100%;
+}
+
+#footer {
+	float: left;
+	margin: -140px 0 0 20px;
+	font-size: 11px;
+	font-style: italic;
+	color: #777777;
+}
+
 /* styling of an exposed element */ 
 #mask {
 	background:#678 url(images/mask_gradient_1000.png) no-repeat;
@@ -14,45 +69,10 @@ form.expose {
 	text-align:center;
 	width:350px;
 	-moz-border-radius:4px;
+	-webkit-border-radius: 8px;
+	-o-border-radius: 8px;
+	border-radius: 8px;
 }
-
-#wrapper {
-	background-image: url(images/background.jpg);
-	background-repeat: repeat-y;
-	width: 800px;
-	height: 549px;	
-	border: 4px #008000;
-	margin-right: auto;
-	margin-left: auto;
-}
-
-#header {
-	position: relative;
-	/* change or update here to insert images -- commented by Budi Prasetyo */
-	background-image: url(images/banner.jpg);
-	background-repeat: no-repeat;
-	margin-right: auto;
-	margin-left: auto;
-	width: 800px;
-	padding-top: 70px;
-	text-align: left;
-}
-
-#footer {
-	font-size: 11px;
-	font-style: italic;
-	color: #FFFF88;
-	background-image: url(images/footer.jpg);
-	background-repeat: no-repeat;
-	margin-top: 170px;
-	margin-right: auto;
-	margin-left: 0px;
-	text-align: center;
-	height: 26px;
-	width: 790px;
-	line-height: 250%;
-}
-
 label, input {
 	display: block;
 	width: 150px;
@@ -74,10 +94,6 @@ br {
 
 /* end styling expose */
 
-body {
-	padding:10px;
-	font-family:"Lucida Grande","Lucida Sans Unicode","bitstream vera sans","trebuchet ms",verdana;
-}
 
 /* get rid of those system borders being generated for A tags */
 a:active {

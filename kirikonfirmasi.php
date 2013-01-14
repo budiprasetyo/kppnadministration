@@ -1,9 +1,8 @@
 <?php
-$PhpEncoder = new CPhpEncoder();
-     // Modul Form Search Data Konfirmasi Sispen =======================================================================================//
+// Modul Form Search Data Konfirmasi Sispen =================================================================================//
 if($_GET['module']=='konfirmasipenerimaan'){
 	
-	include_once("config/koneksisp2d.php");
+	include_once("config/koneksisp2d13.php");
 	$username	= $_SESSION[namauser];
      echo "<script type=\"text/javascript\">
 	     $(document).ready(function() {
@@ -62,7 +61,6 @@ if($_GET['module']=='konfirmasipenerimaan'){
 
      // Modul  Search Arsip SP2D----------------------------------------------------------------------------------------------------------------------------------------------//
 elseif($_POST['tampilkanpenerimaan'] == "Tayang"){
-	include_once("config/koneksisp2d.php");
      $kdsatkerCek		= $_POST['kdsatkerCek'];
      $nmwajbayCek	= $_POST['nmwajbayCek'];
      $kdnpwpCek		= $_POST['kdnpwpCek'];
@@ -85,7 +83,14 @@ elseif($_POST['tampilkanpenerimaan'] == "Tayang"){
      $BlBUKU		= $Tgbuku[1];
      $ThBUKU		= $Tgbuku[2];
      $tgbuku		= $ThBUKU."-".$BlBUKU."-".$TgBUKU;
-     
+     if ($ThBUKU == '2013')
+     {
+		include_once("config/koneksisp2d13.php");
+	 }
+	 else
+	 {
+		include_once("config/koneksisp2d.php");
+	 }
      $bagianWhere="";
      
      if(isset($kdsatkerCek)){
@@ -219,7 +224,7 @@ elseif($_POST['tampilkanpenerimaan'] == "Tayang"){
 	     $no++;
 	     }
 	     echo"</table>";
-			     	$n	= 1;
+			    $n	= 1;
 				$qData	= mysql_query($query)or die(mysql_error);
 				while($rData	= mysql_fetch_array($qData)){
 					$kdsatker	=$rData['kdsatker'];
@@ -254,6 +259,7 @@ elseif($_POST['tampilkanpenerimaan'] == "Tayang"){
      else{
      echo "<script type='text/javascript'>
 	     alert('Data tersebut tidak ditemukan');
+	     window.location.replace('media.php?module=konfirmasipenerimaan');
      </script>";			
      }
 }	

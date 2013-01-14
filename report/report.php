@@ -120,7 +120,8 @@
 				else
 				{
 					// Nomor Konsep SP
-					$this->Cell(190,6,'Nomor: SP-         /WPB.14/KP.02/2012',0,1,'C');
+					$nosurat = $_POST['nosurat'];
+					$this->Cell(190,6,$nosurat,0,1,'C');
 				}
 				// Line break
 				$this->Ln(7);

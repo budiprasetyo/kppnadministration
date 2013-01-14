@@ -9,7 +9,8 @@ if ($_GET['module']=='home'){
 
 // Form insert data tanda terima SKPP Seksi Sub Bagian Umum
 elseif($_GET['module'] == 'tandaterimaskpp'){
-	$qMaxagd	= mysql_query("SELECT MAX(noagenda) maxAgd FROM d_skpp WHERE noagenda LIKE 'SKPP%'");
+	$year		= date('Y');
+	$qMaxagd	= mysql_query("SELECT MAX(noagenda) maxAgd FROM d_skpp WHERE noagenda LIKE 'SKPP%' AND RIGHT(tgagdtrm,4) = '$year'");
 	$rMaxagd	= mysql_fetch_array($qMaxagd);
 	
 	//penambahan setiap nomor agenda
@@ -444,7 +445,18 @@ elseif($_GET['module']	== "prosesskpp"){
 										<input type='hidden' name='username' value='$username' />
 										<input type='hidden' name='kdgpp' value='$rDataSkpp[10]' />
 										<input type='hidden' name='kdjenskpp' value='$rDataSkpp[9]' />
-										<input type='hidden' name='idSkpp' value='$rDataSkpp[8]' />
+										<input type='hidden' name='idSkpp' value='$rDataSkpp[8]' />";
+											// Nomor surat keluar pengantar SKPP
+											$qKodesuratkeluar 	= mysql_query("SELECT wpb,kp FROM t_kanwil WHERE aktif='1'");
+											$rKodesuratkeluar 	= mysql_fetch_object($qKodesuratkeluar);
+											$wpb				= $rKodesuratkeluar->wpb;
+											$kp					= $rKodesuratkeluar->kp;
+											$yearnow			= substr($rDataSkpp[1],-4);
+											$nomorsuratkeluar	= "SP-  ";
+											$kodesuratkeluar	= "WPB.".$wpb."/KP.".$kp."/".$yearnow;
+											$newNoklr			= "Nomor: ".$nomorsuratkeluar."/".$kodesuratkeluar;
+											echo "
+										<input type='hidden' name='nosurat' value='$newNoklr' />
 										<input type='submit' class='normaltablesubmit' name='reportkonsepskpp' value='Tayang' onClick=\"this.form.target='_blank'; return true;\"  />
 										</form>
 									</td>
@@ -453,7 +465,18 @@ elseif($_GET['module']	== "prosesskpp"){
 											<input type='hidden' name='username' value='$username' />
 											<input type='hidden' name='kdgpp' value='$rDataSkpp[10]' />
 											<input type='hidden' name='kdjenskpp' value='$rDataSkpp[9]' />
-											<input type='hidden' name='idSkpp' value='$rDataSkpp[8]' />
+											<input type='hidden' name='idSkpp' value='$rDataSkpp[8]' />";
+											// Nomor surat keluar pengantar SKPP
+											$qKodesuratkeluar 	= mysql_query("SELECT wpb,kp FROM t_kanwil WHERE aktif='1'");
+											$rKodesuratkeluar 	= mysql_fetch_object($qKodesuratkeluar);
+											$wpb				= $rKodesuratkeluar->wpb;
+											$kp					= $rKodesuratkeluar->kp;
+											$yearnow			= substr($rDataSkpp[1],-4);
+											$nomorsuratkeluar	= "SP-  ";
+											$kodesuratkeluar	= "WPB.".$wpb."/KP.".$kp."/".$yearnow;
+											$newNoklr			= "Nomor: ".$nomorsuratkeluar."/".$kodesuratkeluar;
+											echo "
+											<input type='hidden' name='nosurat' value='$newNoklr' />
 											<input type='submit' class='normaltablesubmit' name='reportkonsepskpp' value='Konsep' onClick=\"setTimeout('location.reload(true);',1000); this.form.target='_blank'; return true;\"  />
 										</form>
 									</td>
@@ -472,7 +495,7 @@ elseif($_GET['module']	== "prosesskpp"){
 								echo "<td>
 										<form name='form1' method='post' action='report/report.php'>";
 										// Proses Nomor Net SP
-										$qN 	= "SELECT max(nomorsuratkeluar) AS maxSklr FROM d_suratkeluar WHERE nomorsuratkeluar LIKE 'SP-%'";
+										$qN 	= "SELECT max(nomorsuratkeluar) AS maxSklr FROM d_suratkeluar WHERE nomorsuratkeluar LIKE 'SP-%' AND YEAR(tglsurat) = '$yearnow'";
 										$qNet	= mysql_query($qN);
 										$rNet	= mysql_fetch_object($qNet);
 										$MaxSklr= explode('-',$rNet->maxSklr);
@@ -482,10 +505,14 @@ elseif($_GET['module']	== "prosesskpp"){
 										$nourut	= (int) substr($angka,1,5);
 										$nourut++;
 										// Nomor surat keluar pengantar SKPP
+										$qKodesuratkeluar 	= mysql_query("SELECT wpb,kp FROM t_kanwil WHERE aktif='1'");
+										$rKodesuratkeluar 	= mysql_fetch_object($qKodesuratkeluar);
+										$wpb				= $rKodesuratkeluar->wpb;
+										$kp					= $rKodesuratkeluar->kp;
+										$yearnow			= substr($rDataSkpp[1],-4);
 										$nomorsuratkeluar	= "SP-".sprintf("%05s",$nourut);
-										$kodesuratkeluar	= "WPB.14/KP.02/2012";
+										$kodesuratkeluar	= "WPB.".$wpb."/KP.".$kp."/".$yearnow;
 										$newNoklr			= "Nomor: ".$nomorsuratkeluar."/".$kodesuratkeluar;
-										echo $tujuansurat;
 										echo "
 										<input type='hidden' name='nosurat' value='$newNoklr' />
 										<input type='hidden' name='username' value='$username' />
@@ -499,8 +526,13 @@ elseif($_GET['module']	== "prosesskpp"){
 									<td>
 										<form method='post' action='report/report.php'>
 											<input type='hidden' name='username' value='$username' />";
+											$qKodesuratkeluar 	= mysql_query("SELECT wpb,kp FROM t_kanwil WHERE aktif='1'");
+											$rKodesuratkeluar 	= mysql_fetch_object($qKodesuratkeluar);
+											$wpb				= $rKodesuratkeluar->wpb;
+											$kp					= $rKodesuratkeluar->kp;
+											$yearnow			= substr($rDataSkpp[1],-4);
 											// Proses Nomor Net SP
-											$qN 	= "SELECT max(nomorsuratkeluar) AS maxSklr FROM d_suratkeluar WHERE nomorsuratkeluar LIKE 'SP-%'";
+											$qN 	= "SELECT max(nomorsuratkeluar) AS maxSklr FROM d_suratkeluar WHERE nomorsuratkeluar LIKE 'SP-%' AND YEAR(tglsurat) = '$yearnow'";
 											$qNet	= mysql_query($qN);
 											$rNet	= mysql_fetch_object($qNet);
 											$MaxSklr= explode('-',$rNet->maxSklr);
@@ -512,7 +544,7 @@ elseif($_GET['module']	== "prosesskpp"){
 											// Preparing to insert into SKPP table and suratmasuk table
 											// Nomor surat keluar pengantar SKPP
 											$nomorsuratkeluar	= "SP-".sprintf("%05s",$nourut);
-											$kodesuratkeluar	= "WPB.14/KP.02/2012";
+											$kodesuratkeluar	= "WPB.".$wpb."/KP.".$kp."/".$yearnow;
 											// Preparing to update table d_skpp(nospskpp) where noagdskpp
 											$nospskpp			= $nomorsuratkeluar."/".$kodesuratkeluar;
 											$newNoklr			= "Nomor: ".$nomorsuratkeluar."/".$kodesuratkeluar;
@@ -660,20 +692,42 @@ elseif($_GET['module']	== "prosesskppn"){
 							case 1:
 								echo "<td>
 										<form name='form1' method='post' action='report/report.php'>
-										<input type='hidden' name='username' value='$username' />
-										<input type='hidden' name='kdgpp' value='$rDataSkpp[10]' />
-										<input type='hidden' name='kdjenskpp' value='$rDataSkpp[9]' />
-										<input type='hidden' name='idSkpp' value='$rDataSkpp[8]' />
-										<input type='submit' class='normaltablesubmit' name='reportkonsepskpp' value='Tayang' onClick=\"this.form.target='_blank'; return true;\"  />
+											<input type='hidden' name='username' value='$username' />
+											<input type='hidden' name='kdgpp' value='$rDataSkpp[10]' />
+											<input type='hidden' name='kdjenskpp' value='$rDataSkpp[9]' />
+											<input type='hidden' name='idSkpp' value='$rDataSkpp[8]' />";
+											// Nomor surat keluar pengantar SKPP
+											$qKodesuratkeluar 	= mysql_query("SELECT wpb,kp FROM t_kanwil WHERE aktif='1'");
+											$rKodesuratkeluar 	= mysql_fetch_object($qKodesuratkeluar);
+											$wpb				= $rKodesuratkeluar->wpb;
+											$kp					= $rKodesuratkeluar->kp;
+											$yearnow			= substr($rDataSkpp[1],-4);
+											$nomorsuratkeluar	= "SP-  ";
+											$kodesuratkeluar	= "WPB.".$wpb."/KP.".$kp."/".$yearnow;
+											$newNoklr			= "Nomor: ".$nomorsuratkeluar."/".$kodesuratkeluar;
+											echo "
+											<input type='hidden' name='nosurat' value='$newNoklr' />
+											<input type='submit' class='normaltablesubmit' name='reportkonsepskpp' value='Tayang' onClick=\"this.form.target='_blank'; return true;\"  />
 										</form>
 										</td>
 										<td>
 										<form name='form1' method='post' action='report/report.php'>
-										<input type='hidden' name='username' value='$username' />
-										<input type='hidden' name='kdgpp' value='$rDataSkpp[10]' />
-										<input type='hidden' name='kdjenskpp' value='$rDataSkpp[9]' />
-										<input type='hidden' name='idSkpp' value='$rDataSkpp[8]' />
-										<input type='submit' class='normaltablesubmit' name='reportkonsepskpp' value='Konsep' onClick=\"setTimeout('location.reload(true);',1000); this.form.target='_blank'; return true;\" />
+											<input type='hidden' name='username' value='$username' />
+											<input type='hidden' name='kdgpp' value='$rDataSkpp[10]' />
+											<input type='hidden' name='kdjenskpp' value='$rDataSkpp[9]' />
+											<input type='hidden' name='idSkpp' value='$rDataSkpp[8]' />";
+											// Nomor surat keluar pengantar SKPP
+											$qKodesuratkeluar 	= mysql_query("SELECT wpb,kp FROM t_kanwil WHERE aktif='1'");
+											$rKodesuratkeluar 	= mysql_fetch_object($qKodesuratkeluar);
+											$wpb				= $rKodesuratkeluar->wpb;
+											$kp					= $rKodesuratkeluar->kp;
+											$yearnow			= substr($rDataSkpp[1],-4);
+											$nomorsuratkeluar	= "SP-  ";
+											$kodesuratkeluar	= "WPB.".$wpb."/KP.".$kp."/".$yearnow;
+											$newNoklr			= "Nomor: ".$nomorsuratkeluar."/".$kodesuratkeluar;
+											echo "
+											<input type='hidden' name='nosurat' value='$newNoklr' />
+											<input type='submit' class='normaltablesubmit' name='reportkonsepskpp' value='Konsep' onClick=\"setTimeout('location.reload(true);',1000); this.form.target='_blank'; return true;\" />
 										</form>
 										</td>
 										<td>
@@ -688,32 +742,115 @@ elseif($_GET['module']	== "prosesskppn"){
 										break;
 						// Jika status proses = 3 paraf Kasi PD => aktifkan tombol cetak net
 							case 3:
-								echo "<td>
-										<form name='form1' method='post' action='report/report.php'>
+		echo "<td>
+										<form name='form1' method='post' action='report/report.php'>";
+										// Proses Nomor Net SP
+										$qN 	= "SELECT max(nomorsuratkeluar) AS maxSklr FROM d_suratkeluar WHERE nomorsuratkeluar LIKE 'SP-%' AND YEAR(tglsurat) = '$yearnow'";
+										$qNet	= mysql_query($qN);
+										$rNet	= mysql_fetch_object($qNet);
+										$MaxSklr= explode('-',$rNet->maxSklr);
+										$huruf	= $MaxSklr[0];
+										$angka	= $MaxSklr[1];
+										// Casting to integer
+										$nourut	= (int) substr($angka,1,5);
+										$nourut++;
+										// Nomor surat keluar pengantar SKPP
+										$nomorsuratkeluar	= "SP-".sprintf("%05s",$nourut);
+										$qKodesuratkeluar	= mysql_query("SELECT wpb,kp FROM t_kanwil WHERE aktif='1'");
+										$rKodesuratkeluar	= mysql_fetch_object($qKodesuratkeluar);
+										$wpb				= $rKodesuratkeluar->wpb;
+										$kp					= $rKodesuratkeluar->kp;
+										$yearnow			= substr($rDataSkpp[1],-4);
+										$kodesuratkeluar	= "WPB.".$wpb."/KP.".$kp."/".$yearnow;
+										$newNoklr			= "Nomor: ".$nomorsuratkeluar."/".$kodesuratkeluar;
+										echo $tujuansurat;
+										echo "
+										<input type='hidden' name='nosurat' value='$newNoklr' />
 										<input type='hidden' name='username' value='$username' />
+										<input type='hidden' name='status' value='$rDataSkpp[11]' />
 										<input type='hidden' name='kdgpp' value='$rDataSkpp[10]' />
 										<input type='hidden' name='kdjenskpp' value='$rDataSkpp[9]' />
 										<input type='hidden' name='idSkpp' value='$rDataSkpp[8]' />
 										<input type='submit' class='normaltablesubmit' name='reportkonsepskpp' value='Tayang' onClick=\"this.form.target='_blank'; return true;\"  />
 										</form>
-										</td>
-									<td>
-									<form method='post' action='report/report.php'>
-									<input type='hidden' name='username' value='$username' />
-									<input type='hidden' name='kdgpp' value='$rDataSkpp[10]' />
-									<input type='hidden' name='kdjenskpp' value='$rDataSkpp[9]' />
-									<input type='hidden' name='idSkpp' value='$rDataSkpp[8]' />
-									<input type='submit' class='normaltablesubmit' name='reportnetskpp' value='Net' onClick=\"setTimeout('location.reload(true);',1000); this.form.target='_blank'; return true;\" />
-									</form>
 									</td>
 									<td>
-									<form method='post' action='"; echo(htmlentities($_SERVER['PHP_SELF'])); echo "'>
-									<input type='hidden' name='username' value='$username' />
-									<input type='hidden' name='kdgpp' value='$rDataSkpp[10]' />
-									<input type='hidden' name='kdjenskpp' value='$rDataSkpp[9]' />
-									<input type='hidden' name='idSkpp' value='$rDataSkpp[8]' />
-									<input type='submit' class='normaltablesubmit' name='editSkpp' value='Edit' />
-									</form>
+										<form method='post' action='report/report.php'>
+											<input type='hidden' name='username' value='$username' />";
+											$qKodesuratkeluar 	= mysql_query("SELECT wpb,kp FROM t_kanwil WHERE aktif='1'");
+											$rKodesuratkeluar 	= mysql_fetch_object($qKodesuratkeluar);
+											$wpb				= $rKodesuratkeluar->wpb;
+											$kp					= $rKodesuratkeluar->kp;
+											$yearnow			= substr($rDataSkpp[1],-4);
+											// Proses Nomor Net SP
+											$qN 	= "SELECT max(nomorsuratkeluar) AS maxSklr FROM d_suratkeluar WHERE nomorsuratkeluar LIKE 'SP-%' AND YEAR(tglsurat) = '$yearnow'";
+											$qNet	= mysql_query($qN);
+											$rNet	= mysql_fetch_object($qNet);
+											$MaxSklr= explode('-',$rNet->maxSklr);
+											$huruf	= $MaxSklr[0];
+											$angka	= $MaxSklr[1];
+											// Casting to integer
+											$nourut	= (int) substr($angka,1,5);
+											$nourut++;
+											// Preparing to insert into SKPP table and suratmasuk table
+											// Nomor surat keluar pengantar SKPP
+											$nomorsuratkeluar	= "SP-".sprintf("%05s",$nourut);
+											$kodesuratkeluar	= "WPB.".$wpb."/KP.".$kp."/".$yearnow;
+											// Preparing to update table d_skpp(nospskpp) where noagdskpp
+											$nospskpp			= $nomorsuratkeluar."/".$kodesuratkeluar;
+											$newNoklr			= "Nomor: ".$nomorsuratkeluar."/".$kodesuratkeluar;
+											$tujuansurat		= $rDataSkpp[12];
+											// Preparing to update table d_skpp(tgspskpp) where noagdskpp and d_suratkeluar
+											$tglsurat			= date('Y-m-d');
+											$perihal			= "SKPP a.n. ".$rDataSkpp[2];
+											$userpelaksana		= $rDataSkpp[14];
+											$Timepelaksana		= new DateTime;
+											$timepelaksana		= $Timepelaksana->format('Y-m-d H:i:s');
+											$userkasi			= $rDataSkpp[15];
+											$timekasi			= $rDataSkpp[16];
+											$userpejabat		= $rDataSkpp[17];
+											$timepejabat		= $rDataSkpp[18];
+											$usertrmsekret		= $rDataSkpp[19];
+											$Timetrmsekret		= new DateTime($rDataSkpp[1]);
+											$timetrmsekret		= $Timetrmsekret->format('Y-m-d H:i:s');
+											$nomorsuratmasuk	= $rDataSkpp[0];
+											echo "
+											<input type='hidden' name='nomorsuratkeluar' value='$nomorsuratkeluar' />
+											<input type='hidden' name='kodesuratkeluar' value='$kodesuratkeluar' />
+											<input type='hidden' name='tujuansurat' value='$tujuansurat' />
+											<input type='hidden' name='tglsurat' value='$tglsurat' />
+											<input type='hidden' name='perihal' value='$perihal' />
+											<input type='hidden' name='userpelaksana' value='$userpelaksana' />
+											<input type='hidden' name='timepelaksana' value='$timepelaksana' />
+											<input type='hidden' name='userkasi' value='$userkasi' />
+											<input type='hidden' name='timekasi' value='$timekasi' />
+											<input type='hidden' name='userpejabat' value='$userpejabat' />
+											<input type='hidden' name='timetrmpejabat' value='$timepejabat' />
+											<input type='hidden' name='usertrmsekret' value='$usertrmsekret' />
+											<input type='hidden' name='timetrmsekret' value='$timetrmsekret' />
+											<input type='hidden' name='nomorsuratmasuk' value='$nomorsuratmasuk' />
+											
+											<input type='hidden' name='nospskpp' value='$nospskpp' />
+											<input type='hidden' name='tgspskpp' value='$tglsurat' />
+											<input type='hidden' name='noagenda' value='$nomorsuratmasuk' />
+											
+											<input type='hidden' name='nosurat' value='$newNoklr' />
+											<input type='hidden' name='username' value='$username' />
+											<input type='hidden' name='status' value='$rDataSkpp[11]' />
+											<input type='hidden' name='kdgpp' value='$rDataSkpp[10]' />
+											<input type='hidden' name='kdjenskpp' value='$rDataSkpp[9]' />
+											<input type='hidden' name='idSkpp' value='$rDataSkpp[8]' />
+											<input type='submit' class='normaltablesubmit' name='reportnetskpp' value='Net' onClick=\"setTimeout('location.reload(true);',1000); this.form.target='_blank';return true;\" />
+										</form>
+									</td>
+									<td>
+										<form method='post' action='"; echo(htmlentities($_SERVER['PHP_SELF'])); echo "'>
+											<input type='hidden' name='username' value='$username' />
+											<input type='hidden' name='kdgpp' value='$rDataSkpp[10]' />
+											<input type='hidden' name='kdjenskpp' value='$rDataSkpp[9]' />
+											<input type='hidden' name='idSkpp' value='$rDataSkpp[8]' />
+											<input type='submit' class='normaltablesubmit' name='editSkpp' value='Edit' />
+										</form>
 									</td>";
 									break;
 						// Jika status proses = 2 cetak konsep PD
@@ -1044,10 +1181,11 @@ elseif($_GET['module']	== "prosessplitskppgpp"){
 								echo "<td>
 										<form name='form1' method='post' action='"; echo(htmlentities($_SERVER['PHP_SELF'])); echo "'>
 										<input type='hidden' name='username' value='$username' />
+										<input type='hidden' name='anskpp' value='$anskpp' />
 										<input type='hidden' name='kdgpp' value='$kdgpp' />
 										<input type='hidden' name='kdjenskpp' value='$kdjenskpp' />
 										<input type='hidden' name='idSkpp' value='$idSkpp' />
-										<input type='submit' class='normaltablesubmit' name='pengambilanskpp' value='Ambil' onClick=\"setTimeout('location.reload(true);',1000); this.form.target='_blank'; return true;\" />
+										<input type='submit' class='normaltablesubmit' name='pengambilanskpp' value='Ambil' onClick=\"setTimeout('location.reload(true);',1000); return true;\" />
 										</form>
 										</td>";
 								break;
@@ -1156,10 +1294,11 @@ elseif($_GET['module']	== "prosessplitskppnongpp"){
 								echo "<td>
 										<form name='form1' method='post' action='"; echo(htmlentities($_SERVER['PHP_SELF'])); echo "'>
 										<input type='hidden' name='username' value='$username' />
+										<input type='hidden' name='anskpp' value='$anskpp' />
 										<input type='hidden' name='kdgpp' value='$kdgpp' />
 										<input type='hidden' name='kdjenskpp' value='$kdjenskpp' />
 										<input type='hidden' name='idSkpp' value='$idSkpp' />
-										<input type='submit' class='normaltablesubmit' name='pengambilanskpp' value='Ambil' onClick=\"setTimeout('location.reload(true);',1000); this.form.target='_blank'; return true;\" />
+										<input type='submit' class='normaltablesubmit' name='pengambilanskpp' value='Ambil' onClick=\"setTimeout('location.reload(true);',1000); return true;\" />
 										</form>
 										</td>";
 										break;
@@ -1222,26 +1361,27 @@ elseif($_POST['splitskpp'] == "Split" ){
 	$dateSplitum	= date("Y-m-d H:i:s");
 	mysql_query("UPDATE d_skpp SET usersplitum='$username', tgsplitum='$dateSplitum', statproses='6' WHERE id_skpp='$idSkpp'");
 }
-
+//  Pengambilan SKPP melalui loket Sub Bagian Umum
 elseif($_POST['pengambilanskpp'] == "Ambil"){
 		$username 	= $_POST['username'];
+		$anskpp		= $_POST['anskpp'];
 		$kdgpp		= $_POST['kdgpp'];
 		$kdjenskpp	= $_POST['kdjenskpp'];
 		$idSkpp		= $_POST['idSkpp'];
 		echo "<script type='text/javascript'>
 				$(document).ready(function() {
 					$('#promptkonfirmasi').dialog({
-					modal: true
+						modal: true
 					});
 				});
 				</script>
 		<div id='promptkonfirmasi' title='Entri Data Pengambil SKPP'>
-			<table border='0' align='center'>
 				<form name='form1' method='post' action='reporttandapengambilanskpp.php'>
 				<center>Nama Pengambil SKPP <b><input type='text' name='namapengambil' maxlength='30' /></b></center>
 				<br />
 				<br />
 				<input type='hidden' name='kdjenskpp' value='$kdjenskpp' />
+				<input type='hidden' name='anskpp' value='$anskpp' />
 				<input type='hidden' name='kdgpp' value='$kdgpp' />
 				<input type='hidden' name='username' value='$username' />
 				<input type='hidden' name='idSkpp' value='$idSkpp' />

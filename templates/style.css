@@ -317,6 +317,26 @@ padding-left: 7px;
 background: #888888;
 }
 
+#stylized .normaltablesubmit {
+width: 100px;
+height: 26px;
+margin: 20px 250px;
+background: url(images/button.png) no-repeat;
+border: 1px solid;
+cursor: pointer;
+text-align: center;
+color: #ffffff;
+font-size: 12px;
+font-weight: bolder;
+-moz-border-radius: 4px;
+-webkit-border-radius: 4px;
+}
+
+#stylized .normaltablesubmit:hover {
+background: url(images/buttonhover.png) no-repeat;
+color: #000000;
+}
+
 #stylized .button {
 width: 100px;
 height: 26px;
@@ -400,6 +420,10 @@ color:#FFFFFF;
 .normaltable td {
 text-align:center;
 font: 5px;
+}
+.normaltable td.blackgreen{
+background-color:#000000;
+color:#00ff00;
 }
 .normaltable tr:hover {
 text-align:center;
