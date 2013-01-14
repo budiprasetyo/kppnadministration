@@ -3,6 +3,9 @@ config/koneksi1.php
 config/koneksisp2d.php
 config/koneksisp2d11.php
 config/*~
+suratmasuk/*
+suratkeluar/*
+file/*
 breadcumb.php
 hari_kerja.php
 indexa.php
