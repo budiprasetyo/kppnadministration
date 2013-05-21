@@ -270,13 +270,13 @@ elseif($_POST['loadKeTabelArsip']=='Load'){
 		fclose($handle);
 		include_once("config/koneksi.php");
 		/* For windows user, start here
-		 * For production you must change load_sp2d.bat because file's default is on d:\
-		 * $output = system("cmd /c ".dirname(__FILE__).'/load_sp2d.bat');
-		 * end here */
+		 * For production you must change load_sp2d.bat because file's default is on d:\ */
+		 $output = system("cmd /c ".dirname(__FILE__).'/load_sp2d.bat');
+		 /* end here */
 		 
-		/* For unix family, start here */
+		/* For unix family, start here 
 		mysql_query($qInsert);
-		$output = shell_exec('mysql -uroot -P3306 -hlocalhost -pM3t@m0rph monitor < /var/www/monitor/temp/'.$filename);
+		$output = shell_exec('mysql -uroot -P3306 -hlocalhost -p monitor < /var/www/monitor/temp/'.$filename);
 		/* end here */
 		echo "
 			<script type='text/javascript'>
@@ -1391,6 +1391,391 @@ elseif($_POST['InsertNoSP2D'] == 'No.Box Lama')
 	}
 }
 
+// Modul Insert Arsip Metode 3 ===============================================================================//
+elseif($_GET['module'] == 'insertarsip3')
+{
+		echo "<script type=\"text/javascript\">
+				$(document).ready(function() {
+					$('#tanggal').datepicker();
+					});
+			</script>
+			
+				<div id='stylized' class='myform'>
+				<form id='form' name='formInsertArsip' method='post' action='"; echo(htmlentities($_SERVER['PHP_SELF'])); echo "'>
+				<h1>Form entri data arsip SP2D</h1> 
+				<p>Tahap 1 - Entri tanggal SP2D</p>
+  		 			<label>Tanggal SP2D 
+  		 			<span class='small'>Isikan tanggal SP2D</span>
+					</label>  		 			
+  		 			<input id=\"tanggal\" name=\"tgsp2d\" type=\"text\" />
+  	 				<input name='InsertTgArsip3' type='submit' value='Tampilkan' class='button'>
+					<div class='spacer'></div>
+  	 			</form>
+  	 			</div>";
+}
+
+// Tampilkan Data Arsip Metode 3 --------------------------------------------------------------------------//
+elseif($_POST['InsertTgArsip3'] == 'Tampilkan'){
+	echo "<script type = 'text/javascript'>
+	$(document).ready(function(){
+		$('#form').validate();
+	});
+	
+	$(function(){
+		 
+			// add multiple select / deselect functionality
+			$('#selectall').click(function () {
+				  $('.case').attr('checked', this.checked);
+			});
+		 
+			// if all checkbox are selected, check the selectall checkbox
+			// and viceversa
+			$('.case').click(function(){
+		 
+				if($('.case').length == $('.case:checked').length) {
+					$('#selectall').attr('checked', 'checked');
+				} else {
+					$('#selectall').removeAttr('checked');
+				}
+		 
+			});
+		});
+	</script>";
+	$tgsp2d	= $_POST['tgsp2d'];
+	$TglSp2d	= explode('/',$tgsp2d);
+	$tglsp2d	= $TglSp2d[0];
+	$blnsp2d	= $TglSp2d[1];
+	$thnsp2d	= $TglSp2d[2];
+	$Tgsp2d		= $tglsp2d."-".$blnsp2d."-".$thnsp2d;
+	$qTgsp2d	= $thnsp2d."-".$blnsp2d."-".$tglsp2d;
+	
+	echo "<div id='stylized' class='myform'>
+			<form id='formEdit' name='formEditArsipMetode3' method='post' action='".htmlentities($_SERVER['PHP_SELF'])."'>
+							<h1>Edit data arsip SP2D yang telah direkam</h1>
+							<input type='hidden' name='tgsp2d' value='$qTgsp2d' />
+							<input type='submit' class ='button' name='editarsip3button' value='Edit' />
+			</form>
+			<br />
+			<br />
+			<br />
+			<br />
+			<p></p>
+			<form id='form' name='formShowNoDokArsip' method='post' enctype='multipart/form-data'  action='"; echo(htmlentities($_SERVER['PHP_SELF'])); echo "'>
+			<h1>Form rekam data arsip SP2D</h1> 
+					<p>Tahap 2 - Scanning dan upload SP2D</p>
+					<h3>Tanggal SP2D : $Tgsp2d</h3>
+					<p></p>
+					<br />
+					
+						<label>Kode Gudang 
+							<span class='small'>Isikan kode gudang, contoh: A</span>
+						</label>
+						<input type = 'text' name = 'gudang' maxlength = '1' pattern = '[A-Za-z0-9]{1}' title = 'maksimal 1 digit' size = '5'  onkeyup=\"moveOnMax(this,'norak')\" onkeypress='return handleEnter(this,event)'/></td>
+						
+						<label>Nomor Rak 
+							<span class='small'>Isikan nomor rak, contoh: 1</span>
+						</label>
+						<input type = 'text' id = 'norak' name = 'norak' maxlength = '4' size = '5' onkeypress='return handleEnter(this,event)' /></td>
+						
+						<label>Nomor Baris 
+							<span class='small'>Isikan nomor baris, contoh: 3</span>
+						</label>
+						<input type = 'text' name = 'nobaris' maxlength = '4' size = '5' onkeypress='return handleEnter(this,event)' /></td>
+						
+						<label>Nomor Box 
+							<span class='small'>Isikan nomor box, contoh: 5</span>
+						</label>
+						<input type = 'text' name = 'nobox' maxlength = '14' size = '5' onkeypress='return handleEnter(this,event)' /></td>
+				<div class = 'spacer'></div>
+			</div>
+
+					<br />	
+					<br />	
+					<br />	
+					<br />
+					
+					<div id='normaltable'>
+					<table class='normaltable'>
+					<tr>
+						<th width='5%' height = '40px'>No.</th>
+						<th width='8%'>No. SP2D</th>
+						<th width='12%'>Kode Unik<br /><font size = '0.4em' color = '#FFFF00'>Jendok-Dept-Unit-Dekon-Satker</font></th>
+						<th width='8%'>Satker</th>
+						<th width='8%'>No. SPM</th>
+						<th width='8%'>Tgl. SPM</th>
+						<th>Scanning</th>
+						<th width='5%'><input type = 'checkbox' id = 'selectall' /></th>
+					</tr>";
+					
+							$qsp2d	= mysql_query("SELECT DISTINCT * FROM d_arsipsp2d  WHERE tgsp2d='$qTgsp2d' AND gudang = '' AND norak = '' AND nobaris = '' AND nobox IS NULL AND nobox2 = '' ORDER BY kddept,kdunit,kdsatker,nosp2d")or die(mysql_error());
+							$oddcol		= "#CCFF99";
+							$evencol		= "#CCDD88";
+							$no	= 1;
+							while($rsp2d	= mysql_fetch_array($qsp2d)){
+								if($no % 2 == 0) {$color = $evencol;}
+								else{$color = $oddcol;}
+								$nosp2d	= $rsp2d['nosp2d'];
+								$nospm	= $rsp2d['nospm'];
+								$tgspm		= $rsp2d['tgspm'];
+								$kdjendok	= $rsp2d['kdjendok'];
+								$kddept	= $rsp2d['kddept'];
+								$kdunit		= $rsp2d['kdunit'];
+								$tgsp2d		= $rsp2d['tgsp2d'];
+								$kdsatker	= $rsp2d['kdsatker'];
+								$nokarwas	= $rsp2d['nokarwas'];
+								$kddekon	= $rsp2d['kddekon'];
+								$kdunik		= "$kdjendok.$kddept.$kdunit.$kddekon.$nokarwas";
+								
+						
+						echo "<input type='hidden' name='nosp2d$no' value='$nosp2d' />	
+							<input type = 'hidden' name = 'tgsp2d' value = '$tgsp2d' />
+							<tr bgcolor='$color'>
+								<td>$no</td>
+								<td><b>$nosp2d</b></td>
+								<td>$kdunik</td>
+								<td>$kdsatker</td>
+								<td>$nospm</td>
+								<td>$tgspm</td>
+								<td>
+										<input type='file' name='fupload$no' />
+								</td>
+								<td>
+										<input type='checkbox' class = 'case' name='ceksp2d$no' value='$no' />
+								</td>
+							</tr>";
+						$no++;
+					}
+					$jdata	= $no-1;
+					echo "<tr bgcolor='#AADD77'>
+							<td colspan='8'>
+							</td>
+						</tr>
+						</table>
+							<input type='hidden' name='jdata' value='$jdata' />
+							<input type='submit' class='normaltablesubmit' name='arsip3button' value='Simpan' />
+						</form>
+						</div>
+						<div class='spacer'></div>";
+	
+}
+
+// Insert ke Database Arsip3 -------------------------------------------------------------------------------//
+elseif($_POST['arsip3button'] == 'Simpan'){
+	$gudang		=  strtoupper($_POST['gudang']);
+	$norak		=  $_POST['norak'];
+	$nobaris	=  $_POST['nobaris'];
+	$nobox		=  $_POST['nobox'];
+	$tgsp2d		=  explode('-',$_POST['tgsp2d']);
+	$thnsp2d	=  $tgsp2d[0];
+	$blnsp2d	=  $tgsp2d[1];
+	$tglsp2d	=  $tgsp2d[2];
+	
+	$jdata		=  $_POST['jdata'];
+	
+	for($i = 1; $i <= $jdata; $i++){
+			
+			if($_POST['ceksp2d'.$i] > 0){
+				$nosp2d = $_POST['nosp2d'.$i];
+				// Pengecekan apakah nomor box yang sama pernah direkam
+				$qCekBox = mysql_query("SELECT nobox2 FROM d_arsipsp2d WHERE nosp2d = '".$nosp2d."' AND nobox2 = '".$thnsp2d."-".$blnsp2d.$tglsp2d."-".$nobox."'");
+				$rCekBox = mysql_num_rows($qCekBox);
+				
+				if($rCekBox > 0){
+				echo "<script type = 'text/javascript'>
+						alert('Nomor Box $nobox sudah pernah digunakan');
+						window.location = 'insert-arsip-3';
+					</script>";
+				}else{
+				
+					$lokasi_file	= $_FILES['fupload'.$i]['tmp_name'];
+					$nama_file		= $_FILES['fupload'.$i]['name'];
+					// Setting untuk Unix/Linux, untuk windows silakan disesuaikan
+					$direktori	= 'file/'.basename($nama_file);
+					
+					move_uploaded_file($lokasi_file,$direktori);
+					
+					$query = "UPDATE d_arsipsp2d SET gudang = '".$gudang."', norak = '".$norak."', nobaris = '".$nobaris."', nobox2 = '".$thnsp2d."-".$blnsp2d.$tglsp2d."-".$nobox."', file = '".$nama_file."' WHERE nosp2d = '".$nosp2d."'";
+					mysql_query($query);
+					// Pengecekan apakah data berhasil disimpan
+					$qCek = mysql_query("SELECT nobox2 FROM d_arsipsp2d WHERE nosp2d = '".$nosp2d."'");
+					$rCek = mysql_num_rows($qCek);
+					
+					if($rCek > 0){
+						echo "<script type = 'text/javascript'>
+							alert('Data arsip berhasil disimpan');
+							window.location = 'insert-arsip-3';
+						</script>";
+					}else{
+						echo "<script type = 'text/javascript'>
+							alert('Data gagal disimpan');
+						</script>";
+					}
+				}
+					
+			}
+		
+		
+	}
+}
+
+// Edit Data Arsip SP2D yang Pernah Direkam ---------------------------------------------------------------//
+elseif($_POST['editarsip3button'] == 'Edit'){
+	echo "<script type = 'text/javascript'>	
+		$(function(){
+		 
+			// add multiple select / deselect functionality
+			$('#selectall').click(function () {
+				  $('.case').attr('checked', this.checked);
+			});
+		 
+			// if all checkbox are selected, check the selectall checkbox
+			// and viceversa
+			$('.case').click(function(){
+		 
+				if($('.case').length == $('.case:checked').length) {
+					$('#selectall').attr('checked', 'checked');
+				} else {
+					$('#selectall').removeAttr('checked');
+				}
+		 
+			});
+		});
+	</script>";
+	$tgsp2d = $_POST['tgsp2d'];
+	echo "<div id='stylized' class='myform'>
+	<form id='form' name='formShowNoDokArsip' method='post' enctype='multipart/form-data'  action='".htmlentities($_SERVER['PHP_SELF'])."'>
+			<h1>Form edit data arsip SP2D</h1> 
+					<p>Edit data arsip SP2D yang pernah direkam</p>
+					<h3>Tanggal SP2D : $tgsp2d</h3>
+					<br />
+					
+			</div>
+
+					<br />	
+					<br />	
+					<br />	
+					<br />
+					
+					<div id='normaltable'>
+					<table class='normaltable'>
+					<tr>
+						<th width='5%' height = '40px'>No.</th>
+						<th width='7%'>Gudang</th>
+						<th width='7%'>Rak</th>
+						<th width='7%'>Baris</th>
+						<th width='10%'>Box</th>
+						<th width='5%'><input type = 'checkbox' id = 'selectall' /></th>
+					</tr>";
+					
+							$qsp2d	= mysql_query("SELECT DISTINCT tgsp2d,gudang,norak,nobaris,nobox,nobox2,file FROM d_arsipsp2d  WHERE tgsp2d='$tgsp2d' AND (gudang != '' OR norak != '' OR nobaris != '' OR nobox2 != '') GROUP BY gudang,norak,nobaris,nobox2 ORDER BY gudang,norak,nobaris,nobox2 ")or die(mysql_error());
+							$oddcol		= "#CCFF99";
+							$evencol		= "#CCDD88";
+							$no	= 1;
+							while($rsp2d	= mysql_fetch_array($qsp2d)){
+								if($no % 2 == 0) {$color = $evencol;}
+								else{$color = $oddcol;}
+								$tgsp2d		= $rsp2d['tgsp2d'];
+								$gudang		= $rsp2d['gudang'];
+								$norak		= $rsp2d['norak'];
+								$nobaris	= $rsp2d['nobaris'];
+								$Nobox2		= $rsp2d['nobox2'];
+								$NoBox2		= explode('-',$Nobox2);
+								$tgbox		= $NoBox2[0]."-".$NoBox2[1];
+								$noBox		= $NoBox2[2];
+								
+						
+						echo "<input type = 'hidden' name = 'tgsp2d' value = '$tgsp2d' />
+							<tr bgcolor='$color'>
+								<td>$no</td>
+								<td><input type = 'text' name = 'gudang$no' value = '".$gudang."' size = '5' /></td>
+								<td><input type = 'text' name = 'norak$no' value = '".$norak."' size = '5' /></td>
+								<td><input type = 'text' name = 'nobaris$no' value = '".$nobaris."' size = '5' /></td>
+								<td>".$tgbox."- <input type = 'text' name = 'nobox$no' value = '".$noBox."' size = '12' /></td>
+								<td>
+										<input type='checkbox' class = 'case' name='cekbox$no' value='$no' />
+								</td>
+							</tr>";
+						$no++;
+					}
+					$jdata	= $no-1;
+					echo "<tr bgcolor='#AADD77'>
+							<td colspan='6'>
+							</td>
+						</tr>
+						</table>
+							<input type='hidden' name='jdata' value='$jdata' />
+							<input type='submit' class='normaltablesubmit' name='edituploadarsip3button' value='Simpan' />
+						</form>
+						</div>
+						<div class='spacer'></div>";
+	
+}
+
+
+// Update Data Arsip SP2D yang Pernah Direkam -------------------------------------------------------------//
+elseif($_POST['edituploadarsip3button'] == 'Simpan'){
+	/*
+
+	$gudang		=  strtoupper($_POST['gudang']);
+	$norak		=  $_POST['norak'];
+	$nobaris	=  $_POST['nobaris'];
+	$nobox		=  $_POST['nobox'];
+	$tgsp2d		=  explode('-',$_POST['tgsp2d']);
+	$thnsp2d	=  $tgsp2d[0];
+	$blnsp2d	=  $tgsp2d[1];
+	$tglsp2d	=  $tgsp2d[2];
+	*/
+	$jdata		=  $_POST['jdata'];
+	echo $jdata;
+	for($i = 1; $i <= $jdata; $i++){
+			
+			if($_POST['ceksp2d'.$i] > 0){
+				echo $_POST['tgsp2d'];
+			
+			/*
+				$nosp2d = $_POST['nosp2d'.$i];
+				// Pengecekan apakah nomor box yang sama pernah direkam
+				$qCekBox = mysql_query("SELECT nobox2 FROM d_arsipsp2d WHERE nosp2d = '".$nosp2d."' AND nobox2 = '".$thnsp2d."-".$blnsp2d.$tglsp2d."-".$nobox."'");
+				$rCekBox = mysql_num_rows($qCekBox);
+				
+				if($rCekBox > 0){
+				echo "<script type = 'text/javascript'>
+						alert('Nomor Box $nobox sudah pernah digunakan');
+						window.location = 'insert-arsip-3';
+					</script>";
+				}else{
+				
+					$lokasi_file	= $_FILES['fupload'.$i]['tmp_name'];
+					$nama_file		= $_FILES['fupload'.$i]['name'];
+					// Setting untuk Unix/Linux, untuk windows silakan disesuaikan
+					$direktori	= 'file/'.basename($nama_file);
+					
+					move_uploaded_file($lokasi_file,$direktori);
+					
+					$query = "UPDATE d_arsipsp2d SET gudang = '".$gudang."', norak = '".$norak."', nobaris = '".$nobaris."', nobox2 = '".$thnsp2d."-".$blnsp2d.$tglsp2d."-".$nobox."', file = '".$nama_file."' WHERE nosp2d = '".$nosp2d."'";
+					mysql_query($query);
+					// Pengecekan apakah data berhasil disimpan
+					$qCek = mysql_query("SELECT nobox2 FROM d_arsipsp2d WHERE nosp2d = '".$nosp2d."'");
+					$rCek = mysql_num_rows($qCek);
+					
+					if($rCek > 0){
+						echo "<script type = 'text/javascript'>
+							alert('Data arsip berhasil disimpan');
+							window.location = 'insert-arsip-3';
+						</script>";
+					}else{
+						echo "<script type = 'text/javascript'>
+							alert('Data gagal disimpan');
+						</script>";
+					}
+				}
+				
+	*/	
+			}
+		
+		
+	}
+}
 // Modul Referensi Gudang =================================================================================//
 elseif($_GET['module'] == 'referensigudang')
 {
@@ -2079,6 +2464,457 @@ elseif($_POST['btnHbox'] == 'Hapus')
 
 
 
+
+
+
+
+// Modul Referensi Periode Laporan ===========================================================================//
+elseif($_GET['module'] == 'referensiperiodelaporan'){
+	echo "<div id='stylized' class='myform'>
+			<form id='form' name='form' method='post' action='".htmlentities($_SERVER['PHP_SELF'])."'>
+			<h1>Tabel Referensi Periode Laporan</h1>
+			<p>Tabel referensi periode laporan</p>
+			</div>
+			</form>
+			
+			<br />
+			<br />
+			<form method='post' action='".htmlentities($_SERVER['PHP_SELF'])."'>
+				<input type='submit' name='btnEditPeriode' value='Tambah Data' class='normaltablesubmit' style='width:100px !important;' />
+			</form>
+			<br />
+			<div id='normaltable'>
+				<table class='normaltable' width='100%'>
+					<tr>
+							<th width='5%'>No.</th>
+							<th width='60%'>Periode Laporan</th>
+							<th width='20%' colspan='2'>Tindakan</th>
+					</tr>";
+					$qPeriode	= mysql_query("SELECT * FROM r_periode ORDER BY id_periode DESC");
+					$i	= 1;
+					$oddcol			= "#CCFF99";
+					$evencol		= "#CCDD88";
+					while($rPeriode = mysql_fetch_object($qPeriode))
+					{
+						if($i % 2 == 0) {$color = $evencol;}
+						else{$color = $oddcol;}
+						$id			= $rPeriode->id_periode;
+						$periode	= $rPeriode->periode;
+						echo "
+						<tr>
+							<td>".$i."</td>
+							<td>".$periode."</td>
+							<td>
+								<form id='frm_rbox' method='post' action='".htmlentities($_SERVER['PHP_SELF'])."'>
+									<input type='hidden' name='id' value='$id' />
+									<input type='submit' name='btnEditPeriode' value='Edit' class='normaltablesubmit' />
+								</form>
+							</td>
+							<td>
+								<form id='frm_rbox' method='post' action='".htmlentities($_SERVER['PHP_SELF'])."'>
+									<input type='hidden' name='id' value='$id' />
+									<input type='submit' name='btnDeletePeriode' value='Hapus' class='normaltablesubmit' />
+								</form>
+							</td>
+						</tr>";
+						$i++;
+					}
+				echo"
+				</table>
+			</div>";
+}
+
+// Modul Edit Referensi Periode Laporan ---------------------------------------------------------------------//
+elseif($_POST['btnEditPeriode'])
+{
+	
+	$id_periode	= $_POST['id'];
+	
+	$q			= "SELECT * FROM r_periode WHERE id_periode = '$id_periode' LIMIT 1";
+	$qPeriode	= mysql_query($q);
+	$rPeriode 	= mysql_fetch_object($qPeriode);
+	
+	$periode	= $rPeriode->periode;
+
+	echo"
+	<style type='text/css'>
+		em { font-weight: bold; padding-right: 1em; vertical-align: top; }
+	</style>
+	<script>
+	$(document).ready(function(){
+		$('#form').validate();
+	});
+	</script>
+		<div id='stylized' class='myform'>
+		<form id='form' name='form' method='post' action='".htmlentities($_SERVER['PHP_SELF'])."'>
+		<h1>Form data periode Laporan</h1>
+		<p>Form ini digunakan dalam melakukan perekaman/perubahan data referensi periode laporan</p>
+		<h3>Data Referensi Periode Laporan</h3>
+		<p></p>
+				
+		<label>Periode Laporan
+		<span class='small'>Periode laporan, contoh: bulanan, triwulanan</span>
+		</label>
+		<input type='text' id='periode'name='periode' minlength='1'  maxlength='50' value='$periode' onkeypress='return handleEnter(this, event)' onkeyup=\"moveOnMax(this,'submit')\" autofocus='autofocus' />
+		
+		<input type='hidden' name='id_periode' value='$id_periode' />
+		<input type='submit' value='Simpan' class='button' id='submit' name='btnUpdatePeriode' />
+		<div class='spacer'></div>
+		</form>
+		</div>";
+}
+
+// Modul Update dan Insert Periode Laporan -----------------------------------------------------------------------//
+elseif($_POST['btnUpdatePeriode'] == 'Simpan')
+{
+	echo "<script type='text/javascript'>
+			$(document).ready(function() {
+				$('#promptkonfirmasi').dialog({
+					modal: true
+				});
+			});
+	</script>";	
+	
+	$id			= $_POST['id_periode'];
+	$periode	= strtoupper($_POST['periode']);
+	
+	// fungsi perekaman referensi
+	if($id == "")
+	{
+		// query pengecekan apakah data yang akan direkam telah ada sebelumnya
+		$q		= "SELECT periode FROM r_periode WHERE periode LIKE '%$periode%'";
+		$qCek	= mysql_query($q);
+		$rCek	= mysql_num_rows($qCek);
+		if(!$rCek) // insert ke database apabila data belum pernah direkam
+		{
+			$q 			= "REPLACE r_periode SET periode = '$periode'";
+			$qPeriode	= mysql_query($q);
+		}
+		else // notifikasi apabila data tersebut pernah direkam
+		{
+			echo "
+			<div id='promptkonfirmasi' title='informasi'>
+				<br />
+				<center>
+				<b><font color='#FFFFFF' size='4'>Data tersebut pernah direkam</font></b>
+				<br />
+				<br />
+			</div>";
+		}
+	}
+	else // fungsi update referensi
+	{
+		$q			= "UPDATE r_periode SET periode = '$periode' WHERE id_periode = '$id'";
+		$qPeriode	= mysql_query($q);
+	}
+	
+	echo "
+	<script type='text/javascript'>
+		setTimeout(
+			function(){
+				window.location.replace('referensi-periode-laporan');
+				},500
+		);
+	</script>";
+}
+// Modul Hapus Referensi Periode Laporan -------------------------------------------------------------------//
+elseif($_POST['btnDeletePeriode'] == 'Hapus')
+{
+	$id			= $_POST['id'];
+	$q			= "DELETE FROM r_periode WHERE id_periode='$id'";
+	mysql_query($q);
+	echo "
+	<script type='text/javascript'>
+		window.location.replace('referensi-periode-laporan');
+	</script>";
+}
+
+
+
+
+// Modul Referensi Laporan ===========================================================================//
+elseif($_GET['module'] == 'referensilaporan'){
+	echo "<div id='stylized' class='myform'>
+			<form id='form' name='form' method='post' action='".htmlentities($_SERVER['PHP_SELF'])."'>
+			<h1>Tabel Referensi Laporan</h1>
+			<p>Tabel referensi laporan</p>
+			</div>
+			</form>
+			
+			<br />
+			<br />
+			<form method='post' action='".htmlentities($_SERVER['PHP_SELF'])."'>
+				<input type='submit' name='btnEditLaporan' value='Tambah Data' class='normaltablesubmit' style='width:100px !important;' />
+			</form>
+			<br />
+			<div id='normaltable'>
+				<table class='normaltable' width='850px'>
+					<tr>
+							<th width='5%' height = '40px'>No.</th>
+							<th width='25%'>Nama Laporan</th>
+							<th width='15%'>Periode Laporan</th>
+							<th width='25%'>Tujuan Laporan</th>
+							<th width='15%'>Batas Akhir/Satuan</th>
+							<th width='5%'>Kode Seksi</th>
+							<th width='15%' colspan='2'>Tindakan</th>
+					</tr>";
+					// query dari 3 tabel r_seksi, r_periode, r_laporan
+					$qLaporan	= mysql_query("SELECT a.id_laporan, a.nama_laporan, a.id_periode, a.idseksi, a.tujuan_laporan, a.batas_waktu, a.satuan_batas_waktu, b.periode, c.seksi FROM r_laporan a, r_periode b, r_seksi c WHERE a.id_periode = b.id_periode AND a.idseksi = c.idseksi ORDER BY c.seksi");
+					$i	= 1;
+					$oddcol			= "#CCFF99";
+					$evencol		= "#CCDD88";
+					while($rLaporan = mysql_fetch_object($qLaporan))
+					{
+						if($i % 2 == 0) {$color = $evencol;}
+						else{$color = $oddcol;}
+						$id					= $rLaporan->id_laporan;
+						$nama_laporan		= $rLaporan->nama_laporan;
+						$periode			= $rLaporan->periode;
+						$seksi				= $rLaporan->seksi;
+						$tujuan_laporan		= $rLaporan->tujuan_laporan;
+						$batas_waktu		= $rLaporan->batas_waktu;
+						$satuan_batas_waktu	= $rLaporan->satuan_batas_waktu;
+						echo "
+						<tr>
+							<td>".$i."</td>
+							<td style = 'white-space:nowrap;'>".$nama_laporan."</td>
+							<td>".$periode."</td>
+							<td style = 'white-space:nowrap;'>".$tujuan_laporan."</td>
+							<td>".$batas_waktu." ".$satuan_batas_waktu."</td>
+							<td>".$seksi."</td>
+							<td>
+								<form id='frm_rlaporan' method='post' action='".htmlentities($_SERVER['PHP_SELF'])."'>
+									<input type='hidden' name='id' value='$id' />
+									<input type='submit' name='btnEditLaporan' value='Edit' class='normaltablesubmit' />
+								</form>
+							</td>
+							<td>
+								<form id='frm_rlaporan' method='post' action='".htmlentities($_SERVER['PHP_SELF'])."'>
+									<input type='hidden' name='id' value='$id' />
+									<input type='submit' name='btnDeleteLaporan' value='Hapus' class='normaltablesubmit' />
+								</form>
+							</td>
+						</tr>";
+						$i++;
+					}
+				echo"
+				</table>
+			</div>";
+}
+
+// Modul Edit Referensi Laporan ---------------------------------------------------------------------//
+elseif($_POST['btnEditLaporan'])
+{
+	
+	$id_laporan	= $_POST['id'];
+	
+	$q			= "SELECT a.id_laporan, a.nama_laporan, a.id_periode, a.idseksi, a.tujuan_laporan, a.batas_waktu, a.satuan_batas_waktu, b.periode, c.seksi, c.uraianseksi FROM r_laporan a, r_periode b, r_seksi c WHERE a.id_periode = b.id_periode AND a.idseksi = c.idseksi AND a.id_laporan = '$id_laporan' ORDER BY c.seksi";
+	$qLaporan	= mysql_query($q);
+	$rLaporan 	= mysql_fetch_object($qLaporan);
+	
+	$nama_laporan		= $rLaporan->nama_laporan;
+	$periode			= $rLaporan->periode;
+	$seksi				= $rLaporan->seksi;
+	$uraianseksi		= $rLaporan->uraianseksi;
+	$tujuan_laporan		= $rLaporan->tujuan_laporan;
+	$batas_waktu		= $rLaporan->batas_waktu;
+	$satuan_batas_waktu	= $rLaporan->satuan_batas_waktu;
+
+	echo"
+	<style type='text/css'>
+		em { font-weight: bold; padding-right: 1em; vertical-align: top; }
+	</style>
+	<script>
+	$(document).ready(function(){
+		$('#form').validate();
+	});
+	</script>
+		<div id='stylized' class='myform'>
+		<form id='form' name='form' method='post' action='".htmlentities($_SERVER['PHP_SELF'])."'>
+		<h1>Form data Laporan</h1>
+		<p>Form ini digunakan dalam melakukan perekaman/perubahan data referensi laporan</p>
+		<h3>Data Referensi Laporan</h3>
+		<p></p>
+				
+		<label>Nama Laporan
+		<span class='small'>Nama laporan</span>
+		</label>
+		<input type='text' id='nama_laporan' name='nama_laporan' minlength='5'  maxlength='200' value='$nama_laporan' onkeypress='return handleEnter(this, event)' onkeyup=\"moveOnMax(this,'periode')\" autofocus='autofocus' />
+		
+		<label>Periode Laporan
+		<span class='small'>Periode laporan</span>
+		</label>
+			<select name='periode' id='periode' onkeypress='return handleEnter(this,event)' onkeyup=\"moveOnMax(this,'batas_waktu')\" />";
+				$q 			= "SELECT * FROM r_periode ORDER BY id_periode";
+				$qPeriode	= mysql_query($q);
+				while($rPeriode	= mysql_fetch_object($qPeriode))
+				{
+					$id_periode		  = $rPeriode->id_periode;
+					$periode_dropdown = $rPeriode->periode;
+					if($periode == $periode_dropdown)
+					{
+						echo "<option value='$id_periode' selected='selected'>".$periode_dropdown."</option>";
+					}
+					else
+					{
+						echo "<option value='$id_periode'>".$periode_dropdown."</option>";
+					}
+				}		
+			echo "
+			</select>
+			
+		<label>Batas Waktu Laporan
+		<span class='small'>Batas waktu laporan, contoh:5 atau 9</span>
+		</label>
+		<input type='text' id='batas_waktu' name='batas_waktu' pattern = '[0-9]{1,3}' title = 'Data harus berupa angka' value='$batas_waktu' onkeypress='return handleEnter(this, event)' onkeyup=\"moveOnMax(this,'satuan_batas_waktu')\" />
+		
+		<label>Satuan Batas Waktu
+		<span class='small'>Satuan batas waktu laporan</span>
+		</label>
+			<select name='satuan_batas_waktu' id='satuan_batas_waktu' onkeypress='return handleEnter(this,event)' onkeyup=\"moveOnMax(this,'tujuan_laporan')\" />
+				<option selected='selected' value = '0'>- PILIH SATUAN -</option>
+				<option value = 'TGL'>TANGGAL</option>
+				<option value = 'MGN'>MINGGU</option>
+				<option value = 'BLN'>BULAN</option>
+				<option value = 'HKJ'>HARI KERJA</option>
+			</select>
+			
+		<label>Tujuan Laporan
+		<span class='small'>Tujuan laporan</span>
+		</label>
+		<input type='text' id='tujuan_laporan' name='tujuan_laporan' minlength='5'  maxlength='150' value='$tujuan_laporan' onkeypress='return handleEnter(this, event)' onkeyup=\"moveOnMax(this,'seksi')\" />
+		
+		<label>Seksi
+		<span class='small'>Seksi</span>
+		</label>
+			<select name='seksi' id='seksi' onkeypress='return handleEnter(this,event)' onkeyup=\"moveOnMax(this,'submit')\" />";
+				$q 			= "SELECT * FROM r_seksi WHERE seksi NOT LIKE 'A%' AND seksi != 'STK' ORDER BY idseksi";
+				$qSeksi		= mysql_query($q);
+				while($rSeksi	= mysql_fetch_object($qSeksi))
+				{
+					$idseksi		 = $rSeksi->idseksi;
+					$seksi_dropdown  = $rSeksi->seksi;
+					$uraianseksi	 = strtoupper($rSeksi->uraianseksi);
+					if($seksi == $seksi_dropdown)
+					{
+						echo "<option value='$idseksi' selected='selected'>".$uraianseksi."</option>";
+					}
+					else
+					{
+						echo "<option value='$idseksi'>".$uraianseksi."</option>";
+					}
+				}		
+			echo "
+			</select>
+		
+		<input type='hidden' name='id_laporan' value='$id_laporan' />
+		<input type='submit' value='Simpan' class='button' id='submit' name='btnUpdateLaporan' />
+		<div class='spacer'></div>
+		</form>
+		</div>";
+}
+
+// Modul Update dan Insert Laporan -----------------------------------------------------------------------//
+elseif($_POST['btnUpdateLaporan'] == 'Simpan')
+{
+	echo "<script type='text/javascript'>
+			$(document).ready(function() {
+				$('#promptkonfirmasi').dialog({
+					modal: true
+				});
+			});
+	</script>";	
+	
+	$id					= $_POST['id_laporan'];
+	$nama_laporan		= $_POST['nama_laporan'];
+	$periode			= $_POST['periode'];
+	$batas_waktu		= $_POST['batas_waktu'];
+	$satuan_batas_waktu	= $_POST['satuan_batas_waktu'];
+	$tujuan_laporan		= $_POST['tujuan_laporan'];
+	$seksi				= $_POST['seksi'];
+	if($satuan_batas_waktu == '0'){
+		echo "<script type='text/javascript'>
+			alert('Anda belum memilih satuan batas waktu');
+			window.location.replace('referensi-laporan');
+		</script>";
+	}else{
+
+			// fungsi perekaman referensi
+			if($id == "")
+			{
+				// query pengecekan apakah data yang akan direkam telah ada sebelumnya
+				$q		= "SELECT nama_laporan FROM r_laporan WHERE nama_laporan = '$nama_laporan'";
+				$qCek	= mysql_query($q);
+				$rCek	= mysql_num_rows($qCek);
+				if(!$rCek) // insert ke database apabila data belum pernah direkam
+				{
+					$q 			= "REPLACE r_laporan SET nama_laporan = '$nama_laporan', id_periode = '$periode', batas_waktu = '$batas_waktu', satuan_batas_waktu = '$satuan_batas_waktu', tujuan_laporan = '$tujuan_laporan', idseksi = '$seksi'";
+					mysql_query($q);
+					
+					$qSelectMonitoring = "SELECT @last := LAST_INSERT_ID()";
+					mysql_query($qSelectMonitoring);
+					
+					// insert ke table d_monitoring_laporan
+					$qInsertMonitoring 	= "INSERT INTO d_monitoring_laporan(id_laporan) VALUES(@last)";
+					mysql_query($qInsertMonitoring);
+				}
+				else // notifikasi apabila data tersebut pernah direkam
+				{
+					echo "
+					<div id='promptkonfirmasi' title='informasi'>
+						<br />
+						<center>
+						<b><font color='#FFFFFF' size='4'>Data tersebut pernah direkam</font></b>
+						<br />
+						<br />
+					</div>";
+				}
+			}
+			else // fungsi update referensi
+			{
+				$q			= "UPDATE r_laporan SET nama_laporan = '$nama_laporan', id_periode = '$periode', batas_waktu = '$batas_waktu', satuan_batas_waktu = '$satuan_batas_waktu', tujuan_laporan = '$tujuan_laporan', idseksi = '$seksi' WHERE id_laporan = '$id'";
+				$qLaporan	= mysql_query($q);
+				
+			}
+
+		echo "
+		<script type='text/javascript'>
+			setTimeout(
+				function(){
+					window.location.replace('referensi-laporan');
+					}
+			);
+		</script>";
+	}
+	
+}
+// Modul Hapus Referensi Laporan -------------------------------------------------------------------//
+elseif($_POST['btnDeleteLaporan'] == 'Hapus')
+{
+	$id			= $_POST['id'];
+	$q			= "DELETE FROM r_laporan WHERE id_laporan='$id'";
+	mysql_query($q);
+	
+	// delete pada table d_monitoring_laporan
+	$qMonitoringLaporan = "DELETE FROM d_monitoring_laporan WHERE id_laporan = '$id'";
+	mysql_query($qMonitoringLaporan);
+	
+	echo "
+	<script type='text/javascript'>
+		window.location.replace('referensi-laporan');
+	</script>";
+}
+
+
+
+
+
+
+
+
+
+
+
 // Modul Print Label Arsip ===================================================================================//
 elseif($_GET['module']=='printlabelarsip'){
 	
@@ -2086,7 +2922,7 @@ elseif($_GET['module']=='printlabelarsip'){
 
 // Modul Monitoring 1 Jam SP2D ===============================================================================//
 elseif($_GET['module']=='monitoring1jamsp2d'){
-	include_once("config/koneksisp2d.php");
+	include_once("config/koneksisp2d13.php");
 	echo "<div id='stylizedtable' class='mytable'>
 			<h1>Form monitoring 1 jam penerbitan SP2D</h1> 
 			<p>Tayangan</p>
@@ -2109,8 +2945,8 @@ elseif($_GET['module']=='monitoring1jamsp2d'){
 			<tr>
 			<td>&nbsp;</td>
 			</tr>";
-	require_once(dirname(__FILE__) . '/config/koneksisp2d.php');
-	$qMon	= mysql_query("SELECT DISTINCT kdsatker,nospm,nosp2d,tgslssp2d,kdstaspm,timediff(tgslssp2d,now()) as selisih FROM d_spmind WHERE date(tgsp2d)=date(now()) AND kdjenspm>'04' AND kdstaspm<'4' ORDER BY selisih,kdstaspm ASC");
+	require_once(dirname(__FILE__) . '/config/koneksisp2d13.php');
+	$qMon	= mysql_query("SELECT DISTINCT kdsatker,nospm,nosp2d,tgslssp2d,kdstaspm,timediff(tgslssp2d,now()) as selisih FROM d_spmind WHERE date(tgsp2d)=date(now()) AND kdjenspm>'04' AND kdstaspm<='4' ORDER BY selisih,kdstaspm ASC");
 	while($rMon	= mysql_fetch_array($qMon)){
 		$kdsatker	= $rMon['kdsatker'];
 		$nospm		= $rMon['nospm'];
@@ -2178,7 +3014,7 @@ elseif($_GET['module']=='rekamnewsticker'){
 					<th width='20%'>Tindakan</th>
 			</tr>";
 			// koneksi ke sp2d
-			require_once(dirname(__FILE__) . '/config/koneksisp2d.php');
+			require_once(dirname(__FILE__) . '/config/koneksisp2d13.php');
 			$qNews		= mysql_query("SELECT * FROM t_newsticker ORDER BY idnews,news");
 			$no	=1;
 			$oddcol		= "#CCFF99";
@@ -2238,7 +3074,7 @@ elseif($_POST['tambahnewsticker']=='Tambah'){
 elseif($_POST['Insertnews']=='Rekam'){
 	$news	= $_POST['news'];
 	// koneksi ke database sp2d 
-	require_once(dirname(__FILE__) . '/config/koneksisp2d.php');
+	require_once(dirname(__FILE__) . '/config/koneksisp2d13.php');
 		// Insert data
 		mysql_query("INSERT INTO t_newsticker(news)
 							VALUES('$news')");
@@ -2262,7 +3098,7 @@ elseif($_POST['Insertnews']=='Rekam'){
 elseif($_POST['hapusnewsticker']=='Hapus'){
 	$idnews	= $_POST['idnews'];
 	// koneksi ke database sp2d 
-	require_once(dirname(__FILE__) . '/config/koneksisp2d.php');
+	require_once(dirname(__FILE__) . '/config/koneksisp2d13.php');
 		// Insert data
 		mysql_query("DELETE FROM t_newsticker
 							WHERE idnews='$idnews'");

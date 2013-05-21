@@ -5,7 +5,492 @@ $timezone 	= "Asia/Jakarta";
 if(function_exists('date_default_timezone_set')) date_default_timezone_set($timezone);
 
 // Halaman utama (Home)
-if ($_GET['module']=='home'){
+if ($_GET['module']=='home' || $_GET['module'] == "terimaprosessuratmasuk"){
+	// Menu worklist Kepala Kantor dan Kepala Seksi
+	if(substr($_SESSION[seksi],0,1) == 'A' || substr($_SESSION[seksi],0,2) == 'KK'){
+		if($_SESSION[seksi] != 'ALL')
+		{
+			echo "<div id = 'menu_button'>
+					<table id = 'table_menu_parent'>
+						<tr>
+							<td valign = 'top' width = '175px'>
+								<li>
+									<ol><a href = 'home'>Surat Belum Diterima</a></ol>
+									<ol><a href = 'surat-masuk-diterima'>Surat Telah Diterima</a></ol>
+									<ol><a href = 'surat-masuk-ditindaklanjuti'>Surat Harus Ditindaklanjuti</a></ol>
+								</li>
+							</td>
+						</tr>
+					</table>
+				</div>";
+		}
+	}
+	
+	// Worklist kepala seksi ditampilkan di halaman beranda
+	if(substr($_SESSION[seksi],0,1) == 'A'){
+		if($_SESSION[seksi] != 'ALL')
+		{
+	
+			// nama seksi yang didisposisi
+			$seksi 	= strtolower(substr($_SESSION[seksi],1,2));
+		
+							
+								$username	= $_SESSION[namauser];
+								$Seksi		= substr($_SESSION[seksi],1,2);
+								$seksi		= strtolower($Seksi);
+								echo "<div id='stylized' class='myform'>
+										<form id='form' name='form' method='post' action='"; echo(htmlentities($_SERVER['PHP_SELF'])); echo "'>
+										<h1>Tabel Terima dan Proses Surat Masuk</h1>
+												<p>Form ini digunakan untuk melakukan penerimaan dan pemrosesan surat masuk oleh kepala seksi </p>
+										</form>
+									</div>
+												<br />
+												<br />
+												<div id='normaltable'>
+										
+												<table class='child'>
+												<tr>
+												<th width='10%' height='35'>No.</th>
+												<th width='15%'>No. Agenda</th>
+												<th width='15%'>No. Surat</th>
+												<th width='15%'>Tgl. Surat</th>
+												<th width='15%'>Asal Surat</th>
+												<th width='15%'>Perihal</th>
+												<th width='15%'>Tindakan</th>
+												</tr>";
+										
+										$qDataSurat		= mysql_query("SELECT idsurat,CONCAT(kodeagenda,'-',noagenda) AS noagenda,nomorsuratmasuk,asalsurat,date_format(date(tglsurat),'%d-%m-%Y') AS tglsurat,perihal FROM d_suratmasuk WHERE statproses='3' AND $seksi='1' ORDER BY statproses, noagenda DESC,nomorsuratmasuk")or die(mysql_error);
+										$no	=1;
+										$oddcol			= "#CCFF99";
+										$evencol		= "#CCDD88";
+										while($rDataSurat	= mysql_fetch_object($qDataSurat)){
+											if($no % 2 == 0) {$color = $evencol;}
+											else{$color = $oddcol;}
+											echo "<tr bgcolor='$color'>
+													<td height='45'>$no</td>
+													<td>$rDataSurat->noagenda</td>
+													<td>$rDataSurat->nomorsuratmasuk</td>
+													<td>$rDataSurat->tglsurat</td>
+													<td>$rDataSurat->asalsurat</td>
+													<td>$rDataSurat->perihal</td>
+													<td>
+														<form name='form1' method='post' action='"; echo(htmlentities($_SERVER['PHP_SELF'])); echo "'>
+															<input type='hidden' name='username' value='$username' />
+															<input type='hidden' name='idsurat' value='$rDataSurat->idsurat' />
+															<input type='submit' class='normaltablesubmit' name='prosessurat' value='Terima' onClick=\"setTimeout('location.reload(true);',1000); return true;\"  />
+														</form>
+													</td>
+												</tr>";
+											$no++;
+										}
+										echo "</table>
+												</div>
+												</form>";
+		}
+	}
+	// Worklist kepala kantor ditampilkan di halaman beranda
+	elseif(substr($_SESSION[seksi],0,2) == 'KK'){
+	
+							$username	= $_SESSION[namauser];
+							$Seksi		= substr($_SESSION[seksi],1,2);
+							$seksi		= strtolower($Seksi);
+							echo "<div id='stylized' class='myform'>
+							<form id='form' name='form' method='post' action='"; echo(htmlentities($_SERVER['PHP_SELF'])); echo "'>
+							<h1>Tabel Disposisi Surat Masuk</h1>
+									<p>Form ini digunakan untuk melakukan pencatatan disposisi </p>
+							</form>
+						</div>
+									<br />
+									<br />
+									<div id='normaltable'>
+							
+									<table class='child'>
+										<tr>
+										<th width='5px' height='35'>No.</th>
+										<th width='15px'>No. Agenda</th>
+										<th width='15px'>No. Surat</th>
+										<th width='15px'>Tgl. Surat</th>
+										<th width='15px'>Asal Surat</th>
+										<th width='15px'>Perihal</th>
+										<th width='15px'>Tindakan</th>
+										</tr>";
+										
+										$qDataSurat		= mysql_query("SELECT idsurat,CONCAT(kodeagenda,'-',noagenda) AS noagenda,nomorsuratmasuk,asalsurat,date_format(date(tglsurat),'%d-%m-%Y') AS tglsurat,perihal FROM d_suratmasuk WHERE statproses='2' ORDER BY statproses, noagenda DESC,nomorsuratmasuk")or die(mysql_error);
+										$no	=1;
+										$oddcol			= "#CCFF99";
+										$evencol		= "#CCDD88";
+										while($rDataSurat	= mysql_fetch_object($qDataSurat)){
+											if($no % 2 == 0) {$color = $evencol;}
+											else{$color = $oddcol;}
+											echo "<tr bgcolor='$color'>
+													<td align = 'center'>$no</td>
+													<td>$rDataSurat->noagenda</td>
+													<td>$rDataSurat->nomorsuratmasuk</td>
+													<td align = 'center'>$rDataSurat->tglsurat</td>
+													<td>$rDataSurat->asalsurat</td>
+													<td>$rDataSurat->perihal</td>
+													<td align = 'center'>
+														<form name='form1' method='post' action='"; echo(htmlentities($_SERVER['PHP_SELF'])); echo "'>
+															<input type='hidden' name='username' value='$username' />
+															<input type='hidden' name='idsurat' value='$rDataSurat->idsurat' />
+															<input type='submit' class='normaltablesubmit' name='catatdisposisi' value='Disposisi' />
+														</form>
+													</td>
+												</tr>";
+											$no++;
+										}
+							echo "</table>
+									</div>
+									</form>";	
+	}
+}
+
+// Modul worklist menu surat masuk telah diterima
+elseif($_GET['module'] == 'suratmasukditerima'){
+	// Menu worklist Kepala Kantor dan Kepala Seksi
+	if(substr($_SESSION[seksi],0,1) == 'A' || substr($_SESSION[seksi],0,2) == 'KK'){
+		if($_SESSION[seksi] != 'ALL')
+		{
+			echo "<div id = 'menu_button'>
+					<table id = 'table_menu_parent'>
+						<tr>
+							<td valign = 'top' width = '175px'>
+								<li>
+									<ol><a href = 'home'>Surat Belum Diterima</a></ol>
+									<ol><a href = 'surat-masuk-diterima'>Surat Telah Diterima</a></ol>
+									<ol><a href = 'surat-masuk-ditindaklanjuti'>Surat Harus Ditindaklanjuti</a></ol>
+								</li>
+							</td>
+						</tr>
+					</table>
+				</div>";
+		}
+	}
+	
+	// Worklist kepala seksi ditampilkan di halaman beranda
+	if(substr($_SESSION[seksi],0,1) == 'A'){
+		if($_SESSION[seksi] != 'ALL')
+		{
+	
+			// nama seksi yang didisposisi
+			$seksi 	= strtolower(substr($_SESSION[seksi],1,2));
+		
+							
+								$username	= $_SESSION[namauser];
+								$Seksi		= substr($_SESSION[seksi],1,2);
+								$seksi		= strtolower($Seksi);
+								echo "<div id='stylized' class='myform'>
+										<form id='form' name='form' method='post' action='"; echo(htmlentities($_SERVER['PHP_SELF'])); echo "'>
+										<h1>Tabel Terima dan Proses Surat Masuk</h1>
+												<p>Form ini digunakan untuk melakukan penerimaan dan pemrosesan surat masuk oleh kepala seksi </p>
+										</form>
+									</div>
+												<br />
+												<br />
+												<div id='normaltable'>
+										
+												<table class='child'>
+												<tr>
+												<th width='10%' height='35'>No.</th>
+												<th width='15%'>No. Agenda</th>
+												<th width='15%'>No. Surat</th>
+												<th width='15%'>Tgl. Surat</th>
+												<th width='15%'>Asal Surat</th>
+												<th width='15%'>Perihal</th>
+												<th width='15%'>Tindakan</th>
+												</tr>";
+										
+										$qDataSurat		= mysql_query("SELECT idsurat,CONCAT(kodeagenda,'-',noagenda) AS noagenda,nomorsuratmasuk,asalsurat,date_format(date(tglsurat),'%d-%m-%Y') AS tglsurat,perihal FROM d_suratmasuk WHERE statproses > '3' AND $seksi='1' ORDER BY statproses, noagenda DESC,nomorsuratmasuk")or die(mysql_error);
+										$no	=1;
+										$oddcol			= "#CCFF99";
+										$evencol		= "#CCDD88";
+										while($rDataSurat	= mysql_fetch_object($qDataSurat)){
+											if($no % 2 == 0) {$color = $evencol;}
+											else{$color = $oddcol;}
+											echo "<tr bgcolor='$color'>
+													<td height='45'>$no</td>
+													<td>$rDataSurat->noagenda</td>
+													<td>$rDataSurat->nomorsuratmasuk</td>
+													<td>$rDataSurat->tglsurat</td>
+													<td>$rDataSurat->asalsurat</td>
+													<td>$rDataSurat->perihal</td>
+													<td>
+														<form name='form1' method='post' action='"; echo(htmlentities($_SERVER['PHP_SELF'])); echo "'>
+															<input type='hidden' name='username' value='$username' />
+															<input type='hidden' name='idsurat' value='$rDataSurat->idsurat' />
+															<input type='submit' class='normaltablesubmit' name='prosessurat' value='Terima' onClick=\"setTimeout('location.reload(true);',1000); return true;\"  />
+														</form>
+													</td>
+												</tr>";
+											$no++;
+										}
+										echo "</table>
+												</div>
+												</form>";
+		}
+	}
+	// Worklist kepala kantor ditampilkan di halaman beranda
+	elseif(substr($_SESSION[seksi],0,2) == 'KK'){
+						
+							$username	= $_SESSION[namauser];
+							$Seksi		= substr($_SESSION[seksi],1,2);
+							$seksi		= strtolower($Seksi);
+							echo "<div id='stylized' class='myform'>
+							<form id='form' name='form' method='post' action='"; echo(htmlentities($_SERVER['PHP_SELF'])); echo "'>
+							<h1>Tabel Disposisi Surat Masuk</h1>
+									<p>Form ini digunakan untuk melakukan pencatatan disposisi </p>
+							</form>
+						</div>
+									<br />
+									<br />
+									<div id='normaltable'>
+							
+									<table class='child'>
+										<tr>
+										<th width='5px' height='35'>No.</th>
+										<th width='15px'>No. Agenda</th>
+										<th width='15px'>No. Surat</th>
+										<th width='15px'>Tgl. Surat</th>
+										<th width='15px'>Asal Surat</th>
+										<th width='15px'>Perihal</th>
+										<th width='15px'>Tindakan</th>
+										</tr>";
+										
+										$qDataSurat		= mysql_query("SELECT idsurat,CONCAT(kodeagenda,'-',noagenda) AS noagenda,nomorsuratmasuk,asalsurat,date_format(date(tglsurat),'%d-%m-%Y') AS tglsurat,perihal FROM d_suratmasuk WHERE statproses > '2' ORDER BY statproses, noagenda DESC,nomorsuratmasuk")or die(mysql_error);
+										$no	=1;
+										$oddcol			= "#CCFF99";
+										$evencol		= "#CCDD88";
+										while($rDataSurat	= mysql_fetch_object($qDataSurat)){
+											if($no % 2 == 0) {$color = $evencol;}
+											else{$color = $oddcol;}
+											echo "<tr bgcolor='$color'>
+													<td align = 'center'>$no</td>
+													<td>$rDataSurat->noagenda</td>
+													<td>$rDataSurat->nomorsuratmasuk</td>
+													<td align = 'center'>$rDataSurat->tglsurat</td>
+													<td>$rDataSurat->asalsurat</td>
+													<td>$rDataSurat->perihal</td>
+													<td align = 'center'>
+														<form name='form1' method='post' action='"; echo(htmlentities($_SERVER['PHP_SELF'])); echo "'>
+															<input type='hidden' name='username' value='$username' />
+															<input type='hidden' name='idsurat' value='$rDataSurat->idsurat' />
+															<input type='submit' class='normaltablesubmit' name='catatdisposisi' value='Disposisi' />
+														</form>
+													</td>
+												</tr>";
+											$no++;
+										}
+							echo "</table>
+									</div>
+									</form>";
+
+	}
+}
+
+elseif($_GET['module'] == 'suratmasukditindaklanjuti'){
+	// Menu worklist Kepala Kantor dan Kepala Seksi
+	if(substr($_SESSION[seksi],0,1) == 'A' || substr($_SESSION[seksi],0,2) == 'KK'){
+		if($_SESSION[seksi] != 'ALL')
+		{
+			echo "<div id = 'menu_button'>
+					<table id = 'table_menu_parent'>
+						<tr>
+							<td valign = 'top' width = '175px'>
+								<li>
+									<ol><a href = 'home'>Surat Belum Diterima</a></ol>
+									<ol><a href = 'surat-masuk-diterima'>Surat Telah Diterima</a></ol>
+									<ol><a href = 'surat-masuk-ditindaklanjuti'>Surat Harus Ditindaklanjuti</a></ol>
+								</li>
+							</td>
+						</tr>
+					</table>
+				</div>";
+		}
+	}
+	
+	// Worklist kepala seksi ditampilkan di halaman beranda
+	if(substr($_SESSION[seksi],0,1) == 'A'){
+		if($_SESSION[seksi] != 'ALL')
+		{
+	
+			// nama seksi yang didisposisi
+			$seksi 	= strtolower(substr($_SESSION[seksi],1,2));
+		
+							
+								$username	= $_SESSION[namauser];
+								$Seksi		= substr($_SESSION[seksi],1,2);
+								$seksi		= strtolower($Seksi);
+								echo "<div id='stylized' class='myform'>
+										<form id='form' name='form' method='post' action='"; echo(htmlentities($_SERVER['PHP_SELF'])); echo "'>
+										<h1>Tabel Terima dan Proses Surat Masuk</h1>
+												<p>Form ini digunakan untuk melakukan penerimaan dan pemrosesan surat masuk oleh kepala seksi </p>
+										</form>
+									</div>
+												<br />
+												<br />
+												&nbsp;&nbsp;Keterangan Disposisi:<br />
+												&nbsp;&nbsp;&nbsp;&nbsp;A : teliti pendapat<br />
+												&nbsp;&nbsp;&nbsp;&nbsp;B : selesaikan<br />
+												&nbsp;&nbsp;&nbsp;&nbsp;C : jawab<br />
+												&nbsp;&nbsp;&nbsp;&nbsp;D : perbaiki<br />
+												&nbsp;&nbsp;&nbsp;&nbsp;E : ingatkan<br />
+												&nbsp;&nbsp;&nbsp;&nbsp;F : disiapkan<br />
+												<div id='normaltable'>
+												<table class='child'>
+												<tr>
+												<th width='15px' height = '50px'>No. Agenda</th>
+												<th width='25px'>No. Surat</th>
+												<th width='15px'>Tgl. Surat</th>
+												<th width='40px'>Asal Surat</th>
+												<th width='40px'>Perihal</th>
+												<th width='5px'>A</th>
+												<th width='5px'>B</th>
+												<th width='5px'>C</th>
+												<th width='5px'>D</th>
+												<th width='5px'>E</th>
+												<th width='5px'>F</th>
+												<th width='25px'>Tindakan</th>
+												</tr>";
+										
+										$qDataSurat		= mysql_query("SELECT idsurat,CONCAT(kodeagenda,'-',noagenda) AS noagenda,nomorsuratmasuk,asalsurat,date_format(date(tglsurat),'%d-%m-%Y') AS tglsurat,perihal,telitipendapat,selesaikan,jawab,perbaiki,ingatkan,disiapkan FROM d_suratmasuk WHERE statproses = '3' AND $seksi='1' AND (telitipendapat = '1' OR selesaikan = '1' OR jawab = '1' OR perbaiki = '1' OR ingatkan = '1' OR disiapkan = '1') ORDER BY tglsurat DESC,telitipendapat,selesaikan,jawab,perbaiki,ingatkan,disiapkan")or die(mysql_error);
+								
+										
+										$no	=1;
+										$oddcol			= "#CCFF99";
+										$evencol		= "#CCDD88";
+										while($rDataSurat	= mysql_fetch_object($qDataSurat)){		
+											
+											$telitipendapat	= $rDataSurat->telitipendapat;
+											$selesaikan		= $rDataSurat->selesaikan;
+											$jawab			= $rDataSurat->jawab;
+											$perbaiki		= $rDataSurat->perbaiki;
+											$ingatkan		= $rDataSurat->ingatkan;
+											$disiapkan		= $rDataSurat->disiapkan;
+											
+											if($no % 2 == 0) {$color = $evencol;}
+											else{$color = $oddcol;}
+											
+											if($telitipendapat == '1'){
+												$colorteliti = "#FF0000";
+											}else{
+												$colorteliti = "";
+											}
+											
+											if($selesaikan == '1'){
+												$colorselesaikan = "#FF0000";
+											}else{
+												$colorselesaikan = "";
+											}
+											
+											if($jawab == '1'){
+												$colorjawab = "#FF0000";
+											}else{
+												$colorjawab = "";
+											}
+											
+											if($perbaiki == '1'){
+												$colorperbaiki = "#FF0000";
+											}else{
+												$colorperbaiki = "";
+											}
+											
+											if($ingatkan == '1'){
+												$coloringatkan = "#FF0000";
+											}else{
+												$coloringatkan = "";
+											}
+											
+											if($disiapkan == '1'){
+												$colordisiapkan = "#FF0000";
+											}else{
+												$colordisiapkan = "";
+											}
+											
+											
+											echo "<tr bgcolor='$color'>
+													<td height = '100px'>$rDataSurat->noagenda</td>
+													<td>$rDataSurat->nomorsuratmasuk</td>
+													<td>$rDataSurat->tglsurat</td>
+													<td>$rDataSurat->asalsurat</td>
+													<td>$rDataSurat->perihal</td>
+													
+													<td bgcolor = '".$colorteliti."'></td>
+													<td bgcolor = '".$colorselesaikan."'></td>
+													<td bgcolor = '".$colorjawab."'></td>
+													<td bgcolor = '".$colorperbaiki."'></td>
+													<td bgcolor = '".$coloringatkan."'></td>
+													<td bgcolor = '".$colordisiapkan."'></td>
+													<td>
+														<form name='form1' method='post' action='"; echo(htmlentities($_SERVER['PHP_SELF'])); echo "'>
+															<input type='hidden' name='username' value='$username' />
+															<input type='hidden' name='idsurat' value='$rDataSurat->idsurat' />
+															<input type='submit' class='normaltablesubmit' name='prosessurat' value='Terima' onClick=\"setTimeout('location.reload(true);',1000); return true;\"  />
+														</form>
+													</td>
+												</tr>";
+											$no++;
+										}
+										echo "</table>
+												</div>
+												</form>";
+		}
+	}
+	// Worklist kepala kantor ditampilkan di halaman beranda
+	elseif(substr($_SESSION[seksi],0,2) == 'KK'){
+						
+							$username	= $_SESSION[namauser];
+							$Seksi		= substr($_SESSION[seksi],1,2);
+							$seksi		= strtolower($Seksi);
+							echo "<div id='stylized' class='myform'>
+							<form id='form' name='form' method='post' action='"; echo(htmlentities($_SERVER['PHP_SELF'])); echo "'>
+							<h1>Tabel Disposisi Surat Masuk</h1>
+									<p>Form ini digunakan untuk melakukan pencatatan disposisi </p>
+							</form>
+						</div>
+									<br />
+									<br />
+									<div id='normaltable'>
+							
+									<table class='child'>
+										<tr>
+										<th width='5px' height='35'>No.</th>
+										<th width='15px'>No. Agenda</th>
+										<th width='15px'>No. Surat</th>
+										<th width='15px'>Tgl. Surat</th>
+										<th width='15px'>Asal Surat</th>
+										<th width='15px'>Perihal</th>
+										<th width='15px'>Tindakan</th>
+										</tr>";
+										
+										$qDataSurat		= mysql_query("SELECT idsurat,CONCAT(kodeagenda,'-',noagenda) AS noagenda,nomorsuratmasuk,asalsurat,date_format(date(tglsurat),'%d-%m-%Y') AS tglsurat,perihal FROM d_suratmasuk WHERE statproses = '2' ORDER BY statproses, noagenda DESC,nomorsuratmasuk")or die(mysql_error);
+										$no	=1;
+										$oddcol			= "#CCFF99";
+										$evencol		= "#CCDD88";
+										while($rDataSurat	= mysql_fetch_object($qDataSurat)){
+											if($no % 2 == 0) {$color = $evencol;}
+											else{$color = $oddcol;}
+											echo "<tr bgcolor='$color'>
+													<td align = 'center'>$no</td>
+													<td>$rDataSurat->noagenda</td>
+													<td>$rDataSurat->nomorsuratmasuk</td>
+													<td align = 'center'>$rDataSurat->tglsurat</td>
+													<td>$rDataSurat->asalsurat</td>
+													<td>$rDataSurat->perihal</td>
+													<td align = 'center'>
+														<form name='form1' method='post' action='"; echo(htmlentities($_SERVER['PHP_SELF'])); echo "'>
+															<input type='hidden' name='username' value='$username' />
+															<input type='hidden' name='idsurat' value='$rDataSurat->idsurat' />
+															<input type='submit' class='normaltablesubmit' name='catatdisposisi' value='Disposisi' />
+														</form>
+													</td>
+												</tr>";
+											$no++;
+										}
+							echo "</table>
+									</div>
+									</form>";
+
+	}
 }
 
 // Modul perekaman data surat masuk secara manual
@@ -206,7 +691,7 @@ elseif($_GET['module']=='cetakdisposisi'){
 					<th width='15%' colspan='3'>Tindakan</th>
 					</tr>";
 			
-			$qDataSurat		= mysql_query("SELECT statproses,idsurat,CONCAT(kodeagenda,'-',noagenda) AS noagenda,nomorsuratmasuk,asalsurat,date_format(date(tglsurat),'%d-%m-%Y') AS tglsurat,perihal,disposisi,batasselesai,um,pd,bp,vr,sk,sangatsegera,segera,biasa,setuju,tolak,telitipendapat,untukdiketahui,selesaikan,sesuaicatatan,untukperhatian,edarkan,jawab,perbaiki,bicarakandgsaya,bicarakanbersama,ingatkan,simpan,disiapkan,harapdihadiridiwakili FROM d_suratmasuk WHERE statproses<'4' ORDER BY statproses, noagenda DESC,nomorsuratmasuk")or die(mysql_error);
+			$qDataSurat		= mysql_query("SELECT statproses,idsurat,CONCAT(kodeagenda,'-',noagenda) AS noagenda,nomorsuratmasuk,asalsurat,date_format(date(tglsurat),'%d-%m-%Y') AS tglsurat,perihal,disposisi,batasselesai,um,pd,bp,vr,sk,kilat,sangatsegera,segera,biasa,setuju,tolak,telitipendapat,untukdiketahui,selesaikan,sesuaicatatan,untukperhatian,edarkan,jawab,perbaiki,bicarakandgsaya,bicarakanbersama,ingatkan,simpan,disiapkan,harapdihadiridiwakili FROM d_suratmasuk WHERE statproses<'4' ORDER BY statproses, noagenda DESC,nomorsuratmasuk")or die(mysql_error);
 			$no	=1;
 			$oddcol			= "#CCFF99";
 			$evencol		= "#CCDD88";
@@ -238,6 +723,7 @@ elseif($_GET['module']=='cetakdisposisi'){
 								<input type='hidden' name='vr' value='$rDataSurat->vr' />
 								<input type='hidden' name='sk' value='$rDataSurat->sk' />
 								
+								<input type='hidden' name='kilat' value='$rDataSurat->kilat' />
 								<input type='hidden' name='sangatsegera' value='$rDataSurat->sangatsegera' />
 								<input type='hidden' name='segera' value='$rDataSurat->segera' />
 								<input type='hidden' name='biasa' value='$rDataSurat->biasa' />
@@ -338,7 +824,10 @@ elseif($_POST['catatdisposisi']=='Disposisi') {
 	<h1>Form rekam disposisi</h1> 
 		<p>Form ini digunakan Kepala Kantor untuk mencatat disposisi</p>
 		<br />	
-		
+			
+			<label>Kilat</label>
+			<input type='checkbox' class='checkbox' name='kilatCek' />
+			
 			<label>Sangat Segera</label>
 			<input type='checkbox' class='checkbox' name='sangatsegeraCek' />
 			
@@ -484,6 +973,15 @@ elseif($_POST['rekamdisposisi']=='Rekam'){
 	else
 	{
 		$sekretariat = "0";
+	}
+	$kilat			= $_POST['kilatCek'];
+	if($kilat == "on")
+	{
+		$kilat = "1";
+	}
+	else
+	{
+		$kilat = "0";
 	}
 	$sangatsegera 	= $_POST['sangatsegeraCek'];
 	if($sangatsegera == "on")
@@ -662,7 +1160,7 @@ elseif($_POST['rekamdisposisi']=='Rekam'){
 	$batasselesai = $helper->dateConvert($tanggal);
 	$timepejabat= date("Y-m-d H:i:s");
 	// query updating tables for Disposisi Kepala Kantor/Pejabat statproses=3
-	mysql_query("UPDATE d_suratmasuk SET userpejabat='$username',timepejabat='$timepejabat',batasselesai='$batasselesai',disposisi='$disposisi',um='$seksium',pd='$seksipd',bp='$seksibp',vr='$seksivr',sk='$sekretariat',sangatsegera='$sangatsegera',segera='$segera',biasa='$biasa',setuju='$setuju',tolak='$tolak',telitipendapat='$telitipendapat',untukdiketahui='$untukdiketahui',selesaikan='$selesaikan',sesuaicatatan='$sesuaicatatan',untukperhatian='$untukperhatian',edarkan='$edarkan',jawab='$jawab',perbaiki='$perbaiki',bicarakandgsaya='$bicarakandgsaya',bicarakanbersama='$bicarakanbersama',ingatkan='$ingatkan',simpan='$simpan',disiapkan='$disiapkan',harapdihadiridiwakili='$harapdihadiridiwakili',statproses='2' WHERE idsurat='$idsurat'");
+	mysql_query("UPDATE d_suratmasuk SET userpejabat='$username',timepejabat='$timepejabat',batasselesai='$batasselesai',disposisi='$disposisi',um='$seksium',pd='$seksipd',bp='$seksibp',vr='$seksivr',sk='$sekretariat',kilat='$kilat',sangatsegera='$sangatsegera',segera='$segera',biasa='$biasa',setuju='$setuju',tolak='$tolak',telitipendapat='$telitipendapat',untukdiketahui='$untukdiketahui',selesaikan='$selesaikan',sesuaicatatan='$sesuaicatatan',untukperhatian='$untukperhatian',edarkan='$edarkan',jawab='$jawab',perbaiki='$perbaiki',bicarakandgsaya='$bicarakandgsaya',bicarakanbersama='$bicarakanbersama',ingatkan='$ingatkan',simpan='$simpan',disiapkan='$disiapkan',harapdihadiridiwakili='$harapdihadiridiwakili',statproses='2' WHERE idsurat='$idsurat'");
 	// pop up for confirmation
 	echo "<script type='text/javascript'>
 			$(document).ready(function() {

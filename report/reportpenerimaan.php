@@ -58,7 +58,7 @@
 				// Today's date
 				$months 	= Array (1=>"Januari", 2=>"Pebruari", 3=>"Maret", 4=>"April",	5=>"Mei", 6=>"Juni", 7=>"Juli", 8=>"Agustus", 9=>"September", 10=>"Oktober", 11=>"Nopember", 12=>"Desember");
 				$bln		= $months[date("n")];
-				$tgl		= date("d");
+				$tgl			= date("d");
 				$thn		= date("Y");
 				$this->Cell(190,7,"Tanggal: ".$tgl." ".$bln." ".$thn,0,1,'C');
 				// Line break

@@ -61,35 +61,35 @@ if($_GET['module']=='konfirmasipenerimaan'){
 
      // Modul  Search Arsip SP2D----------------------------------------------------------------------------------------------------------------------------------------------//
 elseif($_POST['tampilkanpenerimaan'] == "Tayang"){
-     $kdsatkerCek		= $_POST['kdsatkerCek'];
+     $kdsatkerCek	= $_POST['kdsatkerCek'];
      $nmwajbayCek	= $_POST['nmwajbayCek'];
      $kdnpwpCek		= $_POST['kdnpwpCek'];
      $kdmapCek		= $_POST['kdmapCek'];
      $kdntppCek		= $_POST['kdntppCek'];
      $kdbankposCek	= $_POST['kdbankposCek'];
      $tgbukuCek		= $_POST['tgbukuCek'];
-     $nilsetorCek		= $_POST['nilsetorCek'];
+     $nilsetorCek	= $_POST['nilsetorCek'];
      $kdsatker		= $_POST['kdsatker'];
-     $nmwajbay	= $_POST['nmwajbay'];
+     $nmwajbay		= $_POST['nmwajbay'];
      $kdnpwp		= $_POST['kdnpwp'];
-     $kdmap		= $_POST['kdmap'];
+     $kdmap			= $_POST['kdmap'];
      $kdntpp		= $_POST['kdntpp'];
-     $kdbankpos	= $_POST['kdbankpos'];
+     $kdbankpos		= $_POST['kdbankpos'];
      $nilsetor		= $_POST['nilsetor'];
-     $username	= $_POST['username'];
+     $username		= $_POST['username'];
      $TgBuku		= $_POST['tgbuku'];
      $Tgbuku		= explode("/",$TgBuku);
      $TgBUKU		= $Tgbuku[0];
      $BlBUKU		= $Tgbuku[1];
      $ThBUKU		= $Tgbuku[2];
      $tgbuku		= $ThBUKU."-".$BlBUKU."-".$TgBUKU;
-     if ($ThBUKU == '2013')
+     if ($ThBUKU == '2012')
      {
-		include_once("config/koneksisp2d13.php");
+		include_once("config/koneksisp2d.php");
 	 }
 	 else
 	 {
-		include_once("config/koneksisp2d.php");
+		include_once("config/koneksisp2d13.php");
 	 }
      $bagianWhere="";
      

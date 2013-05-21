@@ -56,7 +56,7 @@ if($_GET['module'] == 'f_status_spm')
 /* Tampilkan hasil pencarian status SPM di tabel -----------------------------------------------------------------------------*/
 elseif($_POST['Caristatusspm'])
 {
-	include_once("config/koneksisp2d.php");
+	include_once("config/koneksisp2d13.php");
 	$kdsatker 	= $_POST['kdsatker'];
 	$nospm		= sprintf("%05s",$_POST['nospm']);
 	echo "<div id='stylized' class='myform'>

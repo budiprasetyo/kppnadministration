@@ -17,10 +17,10 @@ include dirname(dirname(dirname(dirname(__FILE__)))) . "/config/koneksi.php";
 	  for($i=1;$i<=$n;$i++){
 	  $ipserver	= $_POST['ipserver'.$i];
 		if($i == 1){
-			// nama folder SimpleClassCms diubah menjadi display
+			// nama folder display diubah menjadi display
 			// ubah ip server webservice
 			
-			$handle	= @fopen(dirname(dirname(dirname(dirname(dirname(__FILE__))))) . "/SimpleClassCms/conf/ip.php","w");
+			$handle	= @fopen(dirname(dirname(dirname(dirname(dirname(__FILE__))))) . "/display/conf/ip.php","w");
 			$text	= "<?php
 						// Include DAL
 						require_once(dirname(dirname(__FILE__)) . '/inc/class/DAL.php');
@@ -28,7 +28,7 @@ include dirname(dirname(dirname(dirname(__FILE__)))) . "/config/koneksi.php";
 						require_once(dirname(dirname(__FILE__)) . '/conf/config.php');
 
 						// ip
-						define ( 'DB_HOST', '".$ipserver.":3306' );
+						define ( 'DB_HOST', '".$ipserver.":3355' );
 						?>";
 			fwrite($handle, $text);
 			fclose($handle);
@@ -36,7 +36,7 @@ include dirname(dirname(dirname(dirname(__FILE__)))) . "/config/koneksi.php";
 			// ubah ip server webservice penerimaan
 			$handle	= @fopen(dirname(dirname(dirname(dirname(dirname(__FILE__))))) . "/penerimaan/ip.php","w");
 			$text	= "<?php
-						\$host = '".$ipserver.":3306';
+						\$host = '".$ipserver.":3355';
 						?>";
 			fwrite($handle, $text);
 			fclose($handle);
@@ -44,7 +44,7 @@ include dirname(dirname(dirname(dirname(__FILE__)))) . "/config/koneksi.php";
 			// ubah ip server webservice realisasi
 			$handle	= @fopen(dirname(dirname(dirname(dirname(dirname(__FILE__))))) . "/realisasi/includes/ip.php","w");
 			$text	= "<?php
-						\$host = '".$ipserver.":3306';
+						\$host = '".$ipserver.":3355';
 						?>";
 			fwrite($handle, $text);
 			fclose($handle);
@@ -52,7 +52,7 @@ include dirname(dirname(dirname(dirname(__FILE__)))) . "/config/koneksi.php";
 			// ubah ip server aplikasi monitoring dan administrasi
 			$handle	= @fopen(dirname(dirname(dirname(dirname(dirname(__FILE__))))) . "/monitor/config/ip.php","w");
 			$text	= "<?php
-						\$host = '".$ipserver.":3306';
+						\$host = '".$ipserver.":3355';
 						?>";
 			fwrite($handle, $text);
 			fclose($handle);

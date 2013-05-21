@@ -134,6 +134,11 @@ $pdf->Line(3.4,5.9,3.6,5.9); //checkbox kilat
 $pdf->Line(3.4,5.9,3.4,6.1);
 $pdf->Line(3.4,6.1,3.6,6.1);
 $pdf->Line(3.6,5.9,3.6,6.1);
+if($_POST['kilat'] == "1")
+{
+	$pdf->Line(3.4,5.9,3.6,6.1); //garis silang
+	$pdf->Line(3.4,6.1,3.6,5.9); //garis silang
+}
 $pdf->Cell(1.5,0.4,'Kilat',0,0,'L');
 $pdf->Line(5.9,5.9,5.9,6.1); //garis y //checkbox sangat segera
 $pdf->Line(6.1,5.9,6.1,6.1);

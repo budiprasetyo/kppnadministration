@@ -59,6 +59,7 @@ else{
 		    include "kirikonfirmasi.php";
 		    include "kirisurat.php";
 		    include "kirisatker.php";
+		    include "kirilaporan.php";
     ?>
     </p>
   </div>

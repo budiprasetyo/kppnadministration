@@ -59,6 +59,7 @@ switch($_GET[act]){
 								<option value='ABP'>Kasi Bank dan Giro Pos</option>
 								<option value='AVR'>Kasi Verifikasi dan Akuntansi</option>
 								<option value='KK'>Kepala Kantor</option>
+								<option value='STK'>Satuan Kerja</option>
 							</select>
 							</td>
 		  </tr>

@@ -25,7 +25,7 @@ if ($ketemu > 0){
   $_SESSION[namalengkap]  = $r[nama_lengkap];
   $_SESSION[passuser]     = $r[password];
   $_SESSION[leveluser]    = $r[level];
-  $_SESSION[seksi]		  = $r[seksi];
+  $_SESSION[seksi]	= $r[seksi];
 
 	$sid_lama = session_id();
 	

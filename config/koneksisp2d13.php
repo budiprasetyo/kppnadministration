@@ -2,7 +2,7 @@
 
 include "ip.php";
 $database = "sqldb13";
-$link = mysql_connect($host,'root','M3t@m0rph');
+$link = mysql_connect($host,'adminmonitor2012','4dm1nMonitor2012');
       if(!$link){
 	      die('Could not connect: ' .mysql_error());
 	  }
