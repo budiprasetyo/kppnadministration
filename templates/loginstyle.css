@@ -1,0 +1,108 @@
+
+
+body {
+	font-family:"trebuchet ms",verdana;
+	height: 500px;
+	/* gradient background */
+	background-color: #B4D675;/* for non-css3 browsers */
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#E7F2D3', endColorstr='#B4D675'); /* for IE */
+	background: -webkit-gradient(linear, left top, left bottom, from(#E7F2D3), to(#B4D675)); /* for webkit browsers */
+	background: -moz-linear-gradient(top,  #E7F2D3,  #B4D675); /* for firefox 3.6+ */ 
+}
+#title{
+	float: left;
+}
+#logo{
+	background-attachment: scroll;
+    background-clip: border-box;
+    background-color: transparent;
+    background-image: url("images/logodepkeu.png");
+    background-origin: padding-box;
+    background-position: left top;
+    background-repeat: no-repeat;
+    background-size: 50px 50px;
+    float: left;
+    width: 50px;
+    height: 50px;
+    margin-left: 0px;
+    margin-right: 10px;
+    margin-top: -60px;
+}
+#title_apps{
+    padding-left: 70px;
+    margin-left: 0px;
+    margin-top: -50px;
+    font-size: 18px;
+	text-shadow: 1px 1px 2px #404040;
+}
+#title_appsversion{
+    padding-left: 70px;
+    margin-left: 0px;
+    font-size: 14px;
+	text-shadow: 1px 1px 2px #404040;
+}
+#header {
+	margin: 270px 0 0 -210px;
+	width: 100%;
+}
+
+#footer {
+	float: left;
+	margin: -140px 0 0 20px;
+	font-size: 11px;
+	font-style: italic;
+	color: #777777;
+}
+
+/* styling of an exposed element */ 
+#mask {
+	background:#678 url(images/mask_gradient_1000.png) no-repeat;
+	background-position:13% 160px;
+}
+
+
+form.expose {
+	border:3px outset #ccc;
+	background:#c0c0c0 url(images/h150.png) repeat-x;
+	padding:20px;
+	margin:9.5em 14em;
+	text-align:center;
+	width:350px;
+	-moz-border-radius:4px;
+	-webkit-border-radius: 8px;
+	-o-border-radius: 8px;
+	border-radius: 8px;
+}
+label, input {
+	display: block;
+	width: 150px;
+	float: left;
+	margin-bottom: 10px;
+}
+
+
+
+label {
+	text-align: right;
+	width: 75px;
+	padding-right: 20px;
+}
+
+br {
+	clear: left;
+}
+
+/* end styling expose */
+
+
+/* get rid of those system borders being generated for A tags */
+a:active {
+  outline:none;
+}
+
+:focus {
+  -moz-outline-style:none;
+}
+/* end of jquery login */
+
+
